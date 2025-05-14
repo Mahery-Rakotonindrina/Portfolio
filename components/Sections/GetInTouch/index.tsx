@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Heading, Text, Stack, Link, Icon, Box } from '@chakra-ui/react'
 import { motion, Variants } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { RiHeartPulseFill, RiCopyleftLine, RiGithubFill } from 'react-icons/ri'
+import { RiHeartPulseFill, RiGithubFill } from 'react-icons/ri'
 const rimuruVariant: Variants = {
   shake: {
     rotate: [0, 15, 0, -15, 0],
@@ -52,21 +52,21 @@ const GetInTouch = () => {
         </Text>
       </Heading>
       <Text variant="description">
-        Bon, je suis plutôt introverti de nature, mais je réponds toujours avec plaisir — tant que ma batterie sociale le permet 😄.
-        Que ce soit pour parler code, boulot, moto, sport ou même des trucs un peu geek, tout est cool.
+        Bon, je suis plutôt introverti de nature, mais je réponds toujours avec
+        plaisir — tant que ma batterie sociale le permet 😄. Que ce soit pour
+        parler code, boulot, moto, sport ou même des trucs un peu geek, tout est
         Tu peux me contacter sur les réseaux ou m’envoyer un{' '}
         <Link
           href="mailto:maeryrakotonindrina17@gmail.com"
           target="_blank"
           rel="noreferrer"
         >
-          mail
+          mail{' '}
         </Link>
-        {' '}quand tu veux !
+        quand tu veux !
       </Text>
 
       <Box
-        spacing={0.5}
         textAlign="center"
         fontFamily="monospace"
         paddingTop={{ base: 10, lg: 20, xl: 20 }}

@@ -5,7 +5,6 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { motion, Variants, useAnimation } from 'framer-motion'
-import Logo from '../Logo'
 import styles from './styles.module.css'
 import Navigation from './Navigation'
 import { mobileBreakpointsMap } from 'config/theme'

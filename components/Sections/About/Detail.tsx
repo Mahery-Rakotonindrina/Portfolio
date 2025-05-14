@@ -49,13 +49,14 @@ const Detail = ({ onOpen }: ISkillSetModal) => {
         Ce que je fais.
       </Heading>
       <Text variant="description">
-        Cela fait maintenant {professionalYears} ans que je code professionnellement, et actuellement,
-        je travaille en tant que <b>Développeur Full Stack</b> avec un focus sur l'{' '}
+        Cela fait maintenant {professionalYears} ans que je code
+        professionnellement, et actuellement, je travaille en tant que{' '}
+        <b>Développeur Full Stack</b> avec un focus sur l&apos;{' '}
         <b>architecture</b>, les <b>APIs</b>,{' '}
-          <Text as="span" variant="emphasis">
-            la <b>logique métier complexe</b>
-          </Text>{' '}
-          et même l'<b>intégration front-end</b> (oui, le temps file !).
+        <Text as="span" variant="emphasis">
+          la <b>logique métier complexe</b>
+        </Text>{' '}
+        et même l&apos;<b>intégration front-end</b> (oui, le temps file !).
         <br /> <br />
         Voici quelques technologies qui font partie de mon quotidien, mon petit{' '}
         <Tooltip

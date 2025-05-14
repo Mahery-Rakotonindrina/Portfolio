@@ -1,5 +1,4 @@
 import {
-  Box,
   Image as ChkImage,
   Text,
   Link,
@@ -7,13 +6,13 @@ import {
   useColorModeValue,
   chakra,
 } from '@chakra-ui/react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, isValidMotionProp } from 'framer-motion'
 import { useEffect } from 'react'
 import { avatarAnimation } from 'config/animations'
 
 const AvatarImages = {
-  DarkMode: '/KL_avatar.png',
-  LightMode: './KL_avatar_light.png',
+  DarkMode: '/profil.png',
+  LightMode: './profil.png',
 }
 
 declare global {
@@ -22,16 +21,19 @@ declare global {
   }
 }
 
+// ✅ Correction ici
+const MotionBox = chakra(motion.div, {
+  shouldForwardProp: (prop) =>
+    isValidMotionProp(prop) || typeof prop === 'string',
+})
+
 const Avatar = () => {
-  // Utilisation de `chakra` pour rendre Box compatible avec `motion`
-  const MotionBox = motion(chakra(Box))
   const imgAvatar = useColorModeValue(
     AvatarImages.LightMode,
     AvatarImages.DarkMode
   )
 
   useEffect(() => {
-    // Préchargement des images
     const images = [AvatarImages.DarkMode, AvatarImages.LightMode]
     const preloadedImages = images.map((imageSrc) => {
       const img = new Image()
@@ -55,23 +57,16 @@ const Avatar = () => {
       >
         <ChkImage
           src={imgAvatar}
-          alt="KL Lawingco Avatar"
+          alt="Mahery Avatar"
           htmlWidth="250"
           htmlHeight="250"
           margin="auto"
+          boxSize="250px" // largeur + hauteur égales
+          borderRadius="full" // rend l'image ronde
+          objectFit="cover" // optionnel : évite la déformation
+          background="transparent"
           fallback={<SkeletonCircle height="100%" width="100%" />}
         />
-        <Text textAlign="center" fontSize="smaller" variant="description">
-          Art by{' '}
-          <Link
-            href="https://twitter.com/kojiro_ai"
-            target="_blank"
-            aria-label="KojiroArt"
-            rel="noreferrer"
-          >
-            KojiroArt
-          </Link>
-        </Text>
       </MotionBox>
     </AnimatePresence>
   )

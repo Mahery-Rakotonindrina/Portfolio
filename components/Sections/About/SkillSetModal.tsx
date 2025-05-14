@@ -7,14 +7,12 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   List,
   ListItem,
   ListIcon,
   SimpleGrid,
   useColorModeValue,
   Divider,
-  Text,
 } from '@chakra-ui/react'
 import styles from './styles.module.css'
 import { Skill, Skills, splitSkills } from 'config/skills'
@@ -73,12 +71,10 @@ const SkillList = ({
 const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
   const backendCols = splitSkills(Skills.backend)
   const frontendCols = splitSkills(Skills.frontend)
-  const cicdCols = splitSkills(Skills.cicd)
   const dataBaseCols = splitSkills(Skills.database)
   const uiFrameWorkCols = splitSkills(Skills['ui frameworks'])
   const productivityCols = splitSkills(Skills['productivity boost'])
   const mobileCols = splitSkills(Skills.mobile)
-  const gameCols = splitSkills(Skills.games)
   const desktopCols = splitSkills(Skills.desktop)
   return (
     <Modal

@@ -100,7 +100,7 @@ const Sidebar = () => {
             className={styles.marginTopSmall}
             variants={fadeInUp}
           >
-            Software Engineer
+            Développeur Full Stack
           </MotionHeading>
 
           <MotionText
@@ -118,8 +118,8 @@ const Sidebar = () => {
             <br />
             Je suis un développeur web passionné depuis l’enfance.
             <br /> <br />
-            Ce que j’aime ? Transformer des idées complexes en solutions simples et efficaces,
-            du back-end solide aux interfaces intuitives. 
+            Ce que j’aime ? Transformer des idées complexes en solutions simples
+            et efficaces, du back-end solide aux interfaces intuitives.
             <br />
           </MotionText>
           <MotionButton
