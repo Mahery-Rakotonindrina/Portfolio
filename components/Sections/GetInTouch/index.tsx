@@ -54,7 +54,7 @@ const GetInTouch = () => {
       <Text variant="description">
         Bon, je suis plutôt introverti de nature, mais je réponds toujours avec
         plaisir — tant que ma batterie sociale le permet 😄. Que ce soit pour
-        parler code, boulot, moto, sport ou même des trucs un peu geek, tout est
+        parler code, boulot, moto, sport ou même des trucs un peu geek. <br />
         Tu peux me contacter sur les réseaux ou m’envoyer un{' '}
         <Link
           href="mailto:maeryrakotonindrina17@gmail.com"
