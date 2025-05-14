@@ -1,7 +1,5 @@
 import {
   Image as ChkImage,
-  Text,
-  Link,
   SkeletonCircle,
   useColorModeValue,
   chakra,

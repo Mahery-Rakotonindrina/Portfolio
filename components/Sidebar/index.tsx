@@ -23,7 +23,7 @@ import { SocialMedias } from 'config/sidebar'
 const Sidebar = () => {
   const { colorMode } = useColorMode()
   const display = useBreakpointValue({ base: 'none', lg: 'block' })
-  const surNameSize = useBreakpointValue({ base: '2xl', md: '3xl' })
+  const surNameSize = useBreakpointValue({ base: 'xl', md: '2xl' })
   const MotionHeading = motion(Heading)
   const MotionText = motion(Text)
   const MotionStack = motion(Stack)
@@ -61,10 +61,10 @@ const Sidebar = () => {
             variant="accent"
             fontWeight="light"
           >
-            Hey, on dirait que vous êtes tombé sur mon petit coin ! Moi c’est
+            Hey, bienvenu sur mon petit coin du Web! Moi c’est
           </MotionText>
           <MotionHeading
-            as="h2"
+            as="h3"
             size="2xl"
             paddingRight={{ lg: '20' }}
             textTransform="uppercase"
@@ -73,7 +73,7 @@ const Sidebar = () => {
             Solofomahery D.
           </MotionHeading>
           <MotionHeading
-            as="h3"
+            as="h4"
             size={surNameSize}
             variant="emphasis"
             className={styles.marginTopForce}
