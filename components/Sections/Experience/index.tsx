@@ -17,8 +17,8 @@ const DetailSection = () => (
     </Heading>
     <Text variant="description">
       Depuis 2019, j’ai eu la chance de collaborer avec plusieurs entreprises
-      m’ont permis de relever de beaux défis et d’affiner mes compétences, aussi
-      bien humaines que techniques. <br />
+      qui m’ont permis de relever de beaux défis et d’affiner mes compétences,
+      aussi bien humaines que techniques. <br />
       Chacune de ces expériences a contribué à façonner le développeur que je
       suis aujourd’hui, et garde une place particulière dans mon parcours.
     </Text>

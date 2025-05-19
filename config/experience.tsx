@@ -1,6 +1,3 @@
-import { Link } from '@chakra-ui/react'
-import { JSXElementConstructor } from 'react'
-
 export type Company = 'Domoti' | 'Vivetic' | 'Pushtech'
 
 export type CompanyDetail = {
