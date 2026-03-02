@@ -51,9 +51,9 @@ const Detail = ({ onOpen }: ISkillSetModal) => {
         Ce que je fais.
       </Heading>
       <Text variant="description">
-        Cela fait maintenant {professionalYears} ans que je code
-          professionnellement, avec une spécialisation en <b>Frontend</b>{' '}
-          notamment en React et Next.js. J&apos;interviens principalement sur{' '}
+        Cela fait maintenant {professionalYears} ans que je code{' '}
+        professionnellement, avec une spécialisation en <b>Frontend</b>{' '}
+        notamment en React et Next.js. J&apos;interviens principalement sur{' '}
         <b>la conception d&apos;interfaces modernes et performantes</b>, l&apos;{' '}
         <b>l&apos;architecture front-end, l&apos;ntégration d&apos;APIs</b>, et{' '}
         <Text as="span" variant="emphasis">
