@@ -1,8 +1,4 @@
-import {
-  SkeletonCircle,
-  useColorModeValue,
-  chakra,
-} from '@chakra-ui/react'
+import { useColorModeValue, chakra } from '@chakra-ui/react'
 import Image from 'next/image'
 import { motion, AnimatePresence, isValidMotionProp } from 'framer-motion'
 import { useEffect } from 'react'
