@@ -19,6 +19,8 @@ import {
   SiGraphql,
   SiReact,
   SiNextdotjs,
+  SiVuedotjs,
+  SiNodedotjs,
 } from 'react-icons/si'
 import { GiCoffeePot } from 'react-icons/gi'
 import { IoMdOpen } from 'react-icons/io'
@@ -30,7 +32,7 @@ type ISkillSetModal = {
 const Detail = ({ onOpen }: ISkillSetModal) => {
   const emphasis = useColorModeValue('teal.500', 'cyan.200')
   const currentYear = new Date().getFullYear()
-  const professionalYears = currentYear - 2020
+  const professionalYears = currentYear - 2019
 
   return (
     <Stack
@@ -50,13 +52,13 @@ const Detail = ({ onOpen }: ISkillSetModal) => {
       </Heading>
       <Text variant="description">
         Cela fait maintenant {professionalYears} ans que je code
-        professionnellement, et actuellement, je travaille en tant que{' '}
-        <b>Développeur Full Stack</b> avec un focus sur l&apos;{' '}
-        <b>architecture</b>, les <b>APIs</b>,{' '}
+        professionnellement, avec une spécialisation en{' '}
+        <b>Frontend</b> notamment en React et Next.js. J&apos;interviens principalement sur{' '}
+        <b>la conception d&apos;interfaces modernes et performantes</b>, l&apos;{' '}
+        <b>l&apos;architecture front-end, l&apos;ntégration d&apos;APIs</b>, et{' '}
         <Text as="span" variant="emphasis">
-          la <b>logique métier complexe</b>
-        </Text>{' '}
-        et même l&apos;<b>intégration front-end</b> (oui, le temps file !).
+          la <b>gestion de logiques métier côté client</b>
+        </Text>
         <br /> <br />
         Voici quelques technologies qui font partie de mon quotidien, mon petit{' '}
         <Tooltip
@@ -74,9 +76,23 @@ const Detail = ({ onOpen }: ISkillSetModal) => {
       <SimpleGrid columns={2} spacing={4}>
         <List spacing={3}>
           <ListItem fontSize="small" display="flex" alignItems="center">
-            <ListIcon as={SiDotnet} color={emphasis} fontSize="2em" />
-            C# - .NET.Core
+            <ListIcon as={SiReact} color={emphasis} fontSize="2em" />
+            React.JS
           </ListItem>
+          <ListItem fontSize="small" display="flex" alignItems="center">
+            <ListIcon as={SiNextdotjs} color={emphasis} fontSize="2em" />
+            Next.Js
+          </ListItem>
+          <ListItem fontSize="small" display="flex" alignItems="center">
+            <ListIcon as={SiGraphql} color={emphasis} fontSize="2em" />
+            Graphql
+          </ListItem>
+          <ListItem fontSize="small" display="flex" alignItems="center">
+            <ListIcon as={SiVuedotjs} color={emphasis} fontSize="2em" />
+            Vue.Js
+          </ListItem>
+        </List>
+        <List spacing={3}>
           <ListItem fontSize="small" display="flex" alignItems="center">
             <ListIcon as={SiJavascript} color={emphasis} fontSize="2em" />
             Javascript (ES6+)
@@ -85,19 +101,13 @@ const Detail = ({ onOpen }: ISkillSetModal) => {
             <ListIcon as={SiTypescript} color={emphasis} fontSize="2em" />
             Typescript
           </ListItem>
-        </List>
-        <List spacing={3}>
           <ListItem fontSize="small" display="flex" alignItems="center">
-            <ListIcon as={SiGraphql} color={emphasis} fontSize="2em" />
-            Graphql
+            <ListIcon as={SiNodedotjs} color={emphasis} fontSize="2em" />
+            Node.Js
           </ListItem>
           <ListItem fontSize="small" display="flex" alignItems="center">
-            <ListIcon as={SiReact} color={emphasis} fontSize="2em" />
-            React
-          </ListItem>
-          <ListItem fontSize="small" display="flex" alignItems="center">
-            <ListIcon as={SiNextdotjs} color={emphasis} fontSize="2em" />
-            NextJS
+            <ListIcon as={SiDotnet} color={emphasis} fontSize="2em" />
+            C# - .NET.Core
           </ListItem>
         </List>
         <Box>

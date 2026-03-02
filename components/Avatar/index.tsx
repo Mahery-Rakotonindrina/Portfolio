@@ -1,16 +1,16 @@
 import {
-  Image as ChkImage,
   SkeletonCircle,
   useColorModeValue,
   chakra,
 } from '@chakra-ui/react'
+import Image from 'next/image'
 import { motion, AnimatePresence, isValidMotionProp } from 'framer-motion'
 import { useEffect } from 'react'
 import { avatarAnimation } from 'config/animations'
 
 const AvatarImages = {
-  DarkMode: '/profil.png',
-  LightMode: './profil.png',
+  DarkMode: '/Profil_MaheryRakotonindrina.png',
+  LightMode: '/Profil_MaheryRakotonindrina.png',
 }
 
 declare global {
@@ -33,8 +33,8 @@ const Avatar = () => {
 
   useEffect(() => {
     const images = [AvatarImages.DarkMode, AvatarImages.LightMode]
-    const preloadedImages = images.map((imageSrc) => {
-      const img = new Image()
+    const preloadedImages: HTMLImageElement[] = images.map((imageSrc) => {
+      const img = new window.Image()
       img.src = imageSrc
       return img
     })
@@ -53,17 +53,19 @@ const Avatar = () => {
         variants={avatarAnimation}
         exit={{ opacity: 0 }}
       >
-        <ChkImage
+        <Image
           src={imgAvatar}
-          alt="Mahery Avatar"
-          htmlWidth="250"
-          htmlHeight="250"
-          margin="auto"
-          boxSize="250px" // largeur + hauteur égales
-          borderRadius="full" // rend l'image ronde
-          objectFit="cover" // optionnel : évite la déformation
-          background="transparent"
-          fallback={<SkeletonCircle height="100%" width="100%" />}
+          alt="Mahery Rakotonindrina"
+          width={250}
+          height={250}
+          quality={90}
+          priority
+          style={{
+            borderRadius: '50%',
+            objectFit: 'cover',
+            background: 'transparent',
+            margin: 'auto',
+          }}
         />
       </MotionBox>
     </AnimatePresence>
