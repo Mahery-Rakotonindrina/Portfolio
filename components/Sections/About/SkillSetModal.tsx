@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 import {
-  Heading,
+  Text,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -11,15 +11,33 @@ import {
   ListItem,
   ListIcon,
   SimpleGrid,
-  useColorModeValue,
   Divider,
 } from '@chakra-ui/react'
+import { useReducedMotion } from 'framer-motion'
 import styles from './styles.module.css'
-import { Skill, Skills, splitSkills } from 'config/skills'
+import { Skill, SkillCategory, Skills, splitSkills } from 'config/skills'
+import { modalEnter, modalEnterReduced } from 'config/animations'
 
 type ISkillSetModal = {
   isOpen: boolean
   onClose(): void
+}
+
+// Intitulé affiché pour chaque catégorie de config/skills.ts. Le typage
+// Record<SkillCategory, string> force une erreur de compilation si une
+// catégorie est ajoutée sans intitulé : plus aucune compétence ne peut être
+// oubliée du modal (bug pré-existant corrigé ici — "cicd" et "games"
+// n'étaient jamais rendus, voir .claude/memory/developer.md).
+const categoryLabels: Record<SkillCategory, string> = {
+  backend: 'Backend',
+  frontend: 'Frontend',
+  cicd: 'CI/CD & Cloud',
+  database: 'Base de donnée',
+  'ui frameworks': 'Ui Frameworks',
+  'productivity boost': 'Productivity boosts',
+  mobile: 'Mobile Development',
+  games: 'Game Dev',
+  desktop: 'Desktop App',
 }
 
 const SkillList = ({
@@ -29,24 +47,23 @@ const SkillList = ({
   title: string
   columns: Skill[][]
 }) => {
-  const emphasis = useColorModeValue('teal.500', 'cyan.200')
   const [colOne, colTwo = []] = columns
   return (
     <>
-      <Heading as="div" size="sm" paddingBottom={1} variant="description">
+      <Text as="div" textStyle="label" color="text.secondary" paddingBottom={2}>
         {title}
-      </Heading>
-      <Divider marginBottom={4} />
+      </Text>
+      <Divider marginBottom={4} borderColor="border.subtle" />
       <SimpleGrid columns={2} spacing={4} paddingBottom={6}>
         <List spacing={3}>
           {colOne.map((item) => (
             <ListItem
               key={item.name}
-              fontSize="small"
+              fontSize="sm"
               display="flex"
               alignItems="center"
             >
-              <ListIcon as={item.icon} color={emphasis} fontSize="2em" />
+              <ListIcon as={item.icon} color="accent.default" fontSize="2em" />
               {item.name}
             </ListItem>
           ))}
@@ -55,11 +72,11 @@ const SkillList = ({
           {colTwo.map((item) => (
             <ListItem
               key={item.name}
-              fontSize="small"
+              fontSize="sm"
               display="flex"
               alignItems="center"
             >
-              <ListIcon as={item.icon} color={emphasis} fontSize="2em" />
+              <ListIcon as={item.icon} color="accent.default" fontSize="2em" />
               {item.name}
             </ListItem>
           ))}
@@ -69,32 +86,43 @@ const SkillList = ({
   )
 }
 const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
-  const backendCols = splitSkills(Skills.backend)
-  const frontendCols = splitSkills(Skills.frontend)
-  const dataBaseCols = splitSkills(Skills.database)
-  const uiFrameWorkCols = splitSkills(Skills['ui frameworks'])
-  const productivityCols = splitSkills(Skills['productivity boost'])
-  const mobileCols = splitSkills(Skills.mobile)
-  const desktopCols = splitSkills(Skills.desktop)
+  const shouldReduceMotion = useReducedMotion()
+  // Object.keys() renvoie toujours string[] en TypeScript : cast sûr ici
+  // puisque Skills est typé `{ [key in SkillCategory]: Skill[] }` — toute
+  // catégorie ajoutée à config/skills.ts apparaît donc automatiquement ici.
+  const categories = Object.keys(Skills) as SkillCategory[]
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      motionPreset="slideInBottom"
-      scrollBehavior="inside"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Ensemble de mes compétences</ModalHeader>
+      <ModalContent
+        bg="bg.surface"
+        borderWidth="1px"
+        borderColor="border.subtle"
+        borderRadius={0}
+        motionProps={{
+          initial: 'initial',
+          animate: 'animate',
+          exit: 'exit',
+          // modalEnter : fondu + léger zoom à l'ouverture (US-002), réduit à
+          // un simple fondu si prefers-reduced-motion.
+          variants: shouldReduceMotion ? modalEnterReduced : modalEnter,
+        }}
+      >
+        <ModalHeader>
+          <Text as="h2" textStyle="subtitle">
+            Ensemble de mes compétences
+          </Text>
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody className={styles.skillModal}>
-          <SkillList title="Backend " columns={backendCols} />
-          <SkillList title="Frontend " columns={frontendCols} />
-          <SkillList title="Base de donnée" columns={dataBaseCols} />
-          <SkillList title="Ui Frameworks" columns={uiFrameWorkCols} />
-          <SkillList title="Mobile Development" columns={mobileCols} />
-          <SkillList title="Desktop App" columns={desktopCols} />
-          <SkillList title="Productivity boosts" columns={productivityCols} />
+          {categories.map((category) => (
+            <SkillList
+              key={category}
+              title={categoryLabels[category]}
+              columns={splitSkills(Skills[category])}
+            />
+          ))}
         </ModalBody>
       </ModalContent>
     </Modal>

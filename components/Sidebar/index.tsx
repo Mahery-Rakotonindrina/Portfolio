@@ -1,6 +1,5 @@
 import {
   Stack,
-  Heading,
   Text,
   Button,
   useColorMode,
@@ -26,7 +25,6 @@ const Sidebar = () => {
   const shouldReduceMotion = useReducedMotion()
   const display = useBreakpointValue({ base: 'none', lg: 'block' })
 
-  const MotionHeading = motion(Heading)
   const MotionText = motion(Text)
   const MotionStack = motion(Stack)
   const MotionButton = motion(Button)
@@ -75,7 +73,7 @@ const Sidebar = () => {
           >
             Hey, bienvenu sur mon petit coin du Web! Moi c’est
           </MotionText>
-          <MotionHeading
+          <MotionText
             as="h3"
             textStyle="title"
             paddingRight={{ lg: '20' }}
@@ -83,18 +81,20 @@ const Sidebar = () => {
             variants={itemVariants}
           >
             Solofomahery D.
-          </MotionHeading>
-          <MotionHeading
+          </MotionText>
+          <MotionText
             as="h4"
+            lang="fr"
             textStyle="hero"
             variant="emphasis"
             className={styles.marginTopForce}
             textTransform="uppercase"
-            overflowWrap="anywhere"
+            overflowWrap="break-word"
+            sx={{ hyphens: 'auto', WebkitHyphens: 'auto', msHyphens: 'auto' }}
             variants={itemVariants}
           >
             RAKOTONINDRINA
-          </MotionHeading>
+          </MotionText>
           <MotionText
             variant="accentAlternative"
             fontSize="sm"
@@ -104,7 +104,7 @@ const Sidebar = () => {
             ou vous pouvez m’appeler Mahery, ça marche aussi 😉
           </MotionText>
 
-          <MotionHeading
+          <MotionText
             as="h3"
             textStyle="label"
             color="accent.default"
@@ -112,7 +112,7 @@ const Sidebar = () => {
             variants={itemVariants}
           >
             Développeur Frontend
-          </MotionHeading>
+          </MotionText>
 
           <MotionText
             variant="description"

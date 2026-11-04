@@ -51,16 +51,22 @@ Critères d'acceptation :
 - [x] Animation d'entrée élégante, performante (`heroBoot` + cascade `staggerChildren`, contrepartie reduced-motion via `useReducedMotion()`). Vérifiée visuellement par le PO via `mcp__chrome-devtools__*` (disponible dans sa session) : rendu correct, pas de saccade.
 - [x] Rendu desktop + mobile vérifié. Vérifié visuellement par le PO via `mcp__chrome-devtools__*` : desktop (1440px) et mobile (375px), modes clair et sombre, aucun débordement horizontal, pas d'erreur console. `mcp__playwright__*` restait non chargé côté agent `developer` (limite connue depuis US-002, serveur MCP pas encore actif après redémarrage) — contournée en vérifiant depuis la session PO.
 
+**Bug post-validation corrigé** : la vérification initiale était purement visuelle et n'avait pas détecté que la prop `textStyle` ne s'appliquait pas réellement sur les `Heading` Chakra (mécanisme de "remplissage de trous" de Chakra — une propriété déjà définie par le `baseStyle`/`size` par défaut du composant n'est jamais écrasée par `textStyle`). Le hero rendait donc à 36px au lieu de 72px, le label en Poppins au lieu du mono HUD prévu. Trouvé par le PO via `getComputedStyle`, corrigé par le developer : `Heading` → `Text as={tag}` partout où `textStyle` doit piloter la typo (`components/Sidebar/index.tsx`, `components/Sections/About/Detail.tsx`, `components/Sections/About/SkillSetModal.tsx`). Révélait un second problème une fois le hero vraiment à 72px : "RAKOTONINDRINA" débordait/se cassait au milieu d'un mot dans la colonne étroite de la Sidebar en desktop — corrigé avec une vraie césure typographique (`hyphens: auto` + `lang="fr"`). Les deux corrections re-vérifiées par le PO via `mcp__chrome-devtools__*` (styles calculés + captures `screenshots/us003-sidebar-*-final.png`) : hero 72px, label en JetBrains Mono 12px, césure propre ("RAKOTONIN-" / "DRINA"), aucune régression desktop/tablette/mobile. Signature `fontVariantCaps: small-caps` (présente sur tous les titres de section du site) ajoutée aux tokens `title`/`subtitle` de `config/theme.ts` pour survivre aux futures migrations (US-005+).
+
 ## US-004 — Refonte About (Detail + SkillSetModal)
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : moderniser la présentation du profil et des compétences réelles (`config/skills.ts`), sans pourcentages ni jauges inventées.
 
 Critères d'acceptation :
-- [ ] Texte de présentation réel conservé.
-- [ ] Toutes les compétences de `config/skills.ts` restent accessibles (modal ou nouvelle présentation).
-- [ ] Pas de métrique de compétence inventée.
+- [x] Texte de présentation réel conservé. Vérifié par lecture du code (bio, tooltip thé/café, CTA "Mon attirail de développeur" inchangés caractère pour caractère) et par `curl` sur le HTML SSR généré (`/`) : la bio réelle ("gestion de logiques métier...") et le CTA sont bien présents.
+- [x] Toutes les compétences de `config/skills.ts` restent accessibles (modal ou nouvelle présentation). **Bug pré-existant corrigé au passage** : le modal ne rendait que 7 des 9 catégories (`cicd` et `games` étaient absents) — remplacé par une itération sur `Object.keys(Skills)` typée `Record<SkillCategory, string>`, qui force une erreur de compilation si une future catégorie n'a pas d'intitulé. Vérifié par lecture du code et `npm run build` (compile sans erreur de type).
+- [x] Pas de métrique de compétence inventée. Vérifié par lecture du code : aucune barre de progression/pourcentage, seulement des listes d'icônes + libellés réels.
+- [x] Tokens US-002 utilisés : `textStyle` (`title`/`body`/`label`), `color="accent.default"` (remplace les `useColorModeValue('teal.500','cyan.200')` legacy), animations signature `scrollReveal`/`scrollRevealReduced` (cascade d'entrée sur `Detail`), `hoverLift`/`hoverLiftReduced` (CTA), `modalEnter`/`modalEnterReduced` (ouverture du `SkillSetModal`, câblé via la prop `motionProps` de `ModalContent`).
+- [x] `prefers-reduced-motion` respecté : `useReducedMotion()` sélectionne les contreparties `*Reduced` de chaque animation, même pattern que Sidebar (US-003).
+- [x] `npm run lint` et `npm run build` passent (vérifiés par le developer).
+- [x] Rendu visuel (desktop + mobile, clair/sombre, ouverture réelle du modal) vérifié par le PO via `mcp__chrome-devtools__*` : les 9 catégories de compétences s'affichent dans le modal (y compris CI/CD & Cloud et Game Dev, auparavant invisibles), labels de catégorie bien en mono/majuscules/gris, titre du modal en `subtitle`, mobile (375px) sans débordement, aucune erreur console. Captures : `screenshots/us004-skillmodal-desktop-dark-final.png`, `screenshots/us004-about-mobile-dark-final.png`.
 
 ## US-005 — Refonte Experience (timeline)
 **Priorité :** Moyenne

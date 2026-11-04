@@ -138,12 +138,14 @@ const textStyles = {
     fontSize: { base: '3xl', md: '4xl' },
     lineHeight: 'shorter',
     letterSpacing: 'tight',
+    fontVariantCaps: 'small-caps',
   },
   subtitle: {
     fontFamily: 'heading',
     fontWeight: 'medium',
     fontSize: { base: 'xl', md: '2xl' },
     lineHeight: 'short', // 1.375
+    fontVariantCaps: 'small-caps',
   },
   body: {
     fontFamily: 'body',
