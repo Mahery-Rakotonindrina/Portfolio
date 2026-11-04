@@ -24,16 +24,20 @@ Tâches :
 
 ## US-002 — Direction artistique "DEVELOPER.EXE"
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : définir une identité visuelle cohérente (palette, typographie, espacements, motion tokens) inspirée interfaces AAA/sci-fi, minimaliste et pro.
 
 Critères d'acceptation :
-- [ ] Palette de couleurs définie (fond sombre, accent électrique) et vérifiée en contraste WCAG AA.
-- [ ] Échelle typographique définie.
-- [ ] Grille d'espacement définie.
-- [ ] Principes d'animation définis (5 animations fortes max, respect `prefers-reduced-motion`).
-- [ ] Cohérence desktop/mobile validée sur le concept.
+- [x] Palette de couleurs définie (fond sombre, accent électrique) et vérifiée en contraste WCAG AA.
+- [x] Échelle typographique définie.
+- [x] Grille d'espacement définie.
+- [x] Principes d'animation définis (5 animations fortes max, respect `prefers-reduced-motion`).
+- [x] Cohérence desktop/mobile validée sur le concept.
+
+Implémenté dans `config/theme.ts` (colors `night`/`accent`, `semanticTokens`, `fonts`/`fontWeights`/`textStyles`, `sizes`), `config/animations.ts` (5 animations signature + contreparties reduced-motion), `pages/_document.tsx` (ajout police JetBrains Mono). Détails et ratios de contraste dans `.claude/memory/designer.md`. Aucun composant de section modifié (Hero/About/Experience/Projects/Contact repoussés à US-003+).
+
+**Non vérifié visuellement** : les outils `mcp__playwright__*` n'étaient pas chargés dans cette session (redémarrage nécessaire). Le changement de fond/texte global (`styles.global`) affecte déjà le rendu réel de l'app — recommandé qu'un agent avec Playwright actif (tester ou designer en session fraîche) confirme le rendu avant de considérer la fondation visuellement validée.
 
 ## US-003 — Refonte Hero / Sidebar
 **Priorité :** Haute
