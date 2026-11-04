@@ -144,7 +144,7 @@ const Sidebar = () => {
             variants={itemVariants}
             whileHover={hoverLiftTarget}
             as={'a'}
-            href="mailto:maeryrakotonidrina17@gmail.com"
+            href="mailto:maeryrakotonindrina17@gmail.com"
             target="_blank"
           >
             Entrons en contact!
