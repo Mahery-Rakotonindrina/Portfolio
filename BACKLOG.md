@@ -70,14 +70,16 @@ Critères d'acceptation :
 
 ## US-005 — Refonte Experience (timeline)
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : présenter les 3 expériences réelles (Domoti, Vivetic, Pushtech) sous une composition visuelle plus immersive qu'un simple Tabs.
 
 Critères d'acceptation :
-- [ ] Les 3 entreprises, durées et descriptions réelles conservées intégralement.
-- [ ] Logos existants conservés.
-- [ ] Lisible sur mobile sans scroll horizontal cassé.
+- [x] Les 3 entreprises, durées et descriptions réelles conservées intégralement. Vérifié par lecture du code (`config/experience.tsx` non modifié) et par `curl` sur le HTML SSR (`/`) : "Groupe DOMOTI", "VIVETIC GROUP", "PUSHTECH CONSULTING", les 3 durées réelles et les paragraphes de description complets (y compris le texte "GED (Gestion Électronique des Documents)") sont bien présents mot pour mot.
+- [x] Logos existants conservés. Vérifié par lecture du code (mêmes URLs `company.logo.light`/`company.logo.dark` de `config/experience.tsx`, même logique `colorMode`-aware qu'avant) et visuellement sur les 4 captures (desktop/mobile × clair/sombre) : les 3 logos (Domoti, Vivetic, Pushtech) s'affichent correctement.
+- [x] Lisible sur mobile sans scroll horizontal cassé. L'ancien système de `Tabs` (orientation horizontale forcée en dessous de `md`, `overflowX: scroll` sur la liste d'onglets) est remplacé par une timeline verticale unique (pas de changement d'orientation par breakpoint). Vérifié par `getComputedStyle`/`document.documentElement` via script Playwright (`scrollWidth === clientWidth` à 375px, dark et light) et visuellement (`screenshots/us005-experience-mobile-dark.png`, `screenshots/us005-experience-mobile-light.png`).
+
+Implémenté dans `components/Sections/Experience/index.tsx` (heading + description, migrés) et `components/Sections/Experience/Timeline.tsx` (nouveau, remplace `ExperienceTab.tsx` + `styles.module.css` supprimés — plus de `Tabs`/`TabList`/scrollbar custom). Timeline verticale : ligne + point accent par entrée, carte `bg.surface`/`border.subtle` par expérience (logo, nom, durée, liste de rôles avec icône flèche). Heading "Parcours professionnel." migré vers `Text as="h2" textStyle="title"` (retrait du `style={{ fontVariantCaps: 'small-caps' }}` inline et du `size="2xl"` legacy — le token `title` les porte nativement, cf. bugfix post-US-004). Nom d'entreprise en `Text as="h3" textStyle="subtitle"`, durée en `Text as="span" textStyle="label"` (`text.tertiary`), description de rôle en `variant="description"` (`text.secondary`), `fontSize="smaller"` legacy remplacé par `fontSize="sm"`. Chaque carte a son propre déclencheur `whileInView` (`scrollReveal`/`scrollRevealReduced` indépendant par entrée, pas de cascade groupée avec le titre) — choix délibéré pour une timeline qui s'étend sur toute la hauteur de la page : chaque expérience se révèle à son propre passage dans le viewport plutôt que toutes en même temps à l'arrivée du titre. `hoverLift`/`hoverLiftReduced` sur chaque carte (élévation légère au survol). `npm run lint` et `npx tsc --noEmit` passent. Vérification `getComputedStyle` : heading (`h2`) 36px/600/Poppins/small-caps à 1440px, 30px à 375px ; nom d'entreprise (`h3`) 24px/500/Poppins/small-caps à 1440px, 20px à 375px — confirme que `textStyle` s'applique bien via `Text as={tag}` (pas de régression du bug Heading/textStyle identifié post-US-004). Aucune erreur console imputable à Experience/Timeline (les seuls warnings React relevés viennent de Menu/Avatar/FadeWhenVisible, pré-existants, hors scope). Captures : `screenshots/us005-experience-desktop-dark.png`, `-desktop-light.png`, `-mobile-dark.png`, `-mobile-light.png` (vérifiées par le developer via un script Playwright local, `mcp__playwright__*` non chargé dans cette session — voir mémoire developer pour la méthode de contournement).
 
 ## US-006 — Refonte Projects (galerie)
 **Priorité :** Haute
