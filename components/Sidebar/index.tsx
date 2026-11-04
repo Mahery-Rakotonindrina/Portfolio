@@ -10,25 +10,37 @@ import {
   Icon,
   useBreakpointValue,
 } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion, Variants } from 'framer-motion'
 import styles from './styles.module.css'
 import {
-  fadeInUp,
-  letterSpace,
-  simpleOpacity,
-  stagger,
+  heroBoot,
+  heroBootReduced,
+  hoverLift,
+  hoverLiftReduced,
   scaleUp,
 } from 'config/animations'
 import { SocialMedias } from 'config/sidebar'
+
 const Sidebar = () => {
   const { colorMode } = useColorMode()
+  const shouldReduceMotion = useReducedMotion()
   const display = useBreakpointValue({ base: 'none', lg: 'block' })
-  const surNameSize = useBreakpointValue({ base: 'xl', md: '2xl' })
+
   const MotionHeading = motion(Heading)
   const MotionText = motion(Text)
   const MotionStack = motion(Stack)
   const MotionButton = motion(Button)
   const MotionBox = motion(Box)
+  const MotionLink = motion(Link)
+
+  // heroBoot : animation d'entrée signature du Hero (US-002). En cascade sur
+  // chaque ligne via `staggerChildren`, désactivée si prefers-reduced-motion.
+  const itemVariants: Variants = shouldReduceMotion ? heroBootReduced : heroBoot
+  const parentVariants: Variants = {
+    animate: { transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 } },
+  }
+  const hoverLiftTarget = (shouldReduceMotion ? hoverLiftReduced : hoverLift)
+    .hover
 
   return (
     <MotionBox
@@ -54,60 +66,59 @@ const Sidebar = () => {
         display={{ xl: 'flex' }}
         alignItems={{ xl: 'center' }}
       >
-        <MotionStack variants={stagger} spacing={6} w="100">
+        <MotionStack variants={parentVariants} spacing={6} w="100">
           <MotionText
-            variants={fadeInUp}
-            delay={1}
+            variants={itemVariants}
             variant="accent"
             fontWeight="light"
+            fontSize="sm"
           >
             Hey, bienvenu sur mon petit coin du Web! Moi c’est
           </MotionText>
           <MotionHeading
             as="h3"
-            size="2xl"
+            textStyle="title"
             paddingRight={{ lg: '20' }}
             textTransform="uppercase"
-            variants={fadeInUp}
+            variants={itemVariants}
           >
             Solofomahery D.
           </MotionHeading>
           <MotionHeading
             as="h4"
-            size={surNameSize}
+            textStyle="hero"
             variant="emphasis"
             className={styles.marginTopForce}
             textTransform="uppercase"
-            variants={letterSpace}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            overflowWrap="anywhere"
+            variants={itemVariants}
           >
             RAKOTONINDRINA
           </MotionHeading>
           <MotionText
-            colorScheme="gray"
-            fontSize="smaller"
+            variant="accentAlternative"
+            fontSize="sm"
             className={styles.marginTopForce}
-            variants={fadeInUp}
+            variants={itemVariants}
           >
             ou vous pouvez m’appeler Mahery, ça marche aussi 😉
           </MotionText>
 
           <MotionHeading
             as="h3"
-            size="md"
-            variant="emphasis"
+            textStyle="label"
+            color="accent.default"
             className={styles.marginTopSmall}
-            variants={fadeInUp}
+            variants={itemVariants}
           >
             Développeur Frontend
           </MotionHeading>
 
           <MotionText
             variant="description"
-            fontSize="small"
+            textStyle="body"
             paddingRight={{ lg: '12' }}
-            variants={fadeInUp}
+            variants={itemVariants}
             maxWidth={{ base: '100%', lg: '80%' }}
           >
             Oh, quelle bonne surprise de vous voir ici,
@@ -130,19 +141,18 @@ const Sidebar = () => {
             fontWeight="normal"
             fontSize="sm"
             width="160px"
-            variants={simpleOpacity}
+            variants={itemVariants}
+            whileHover={hoverLiftTarget}
             as={'a'}
             href="mailto:maeryrakotonidrina17@gmail.com"
             target="_blank"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
           >
             Entrons en contact!
           </MotionButton>
 
-          <MotionBox d="flex" variants={simpleOpacity}>
+          <MotionBox display="flex" gap={4} variants={itemVariants}>
             {SocialMedias.map((socMedia) => (
-              <Link
+              <MotionLink
                 variant="description"
                 key={socMedia.label}
                 aria-label={socMedia.label}
@@ -151,9 +161,10 @@ const Sidebar = () => {
                 href={socMedia.href}
                 target="_blank"
                 _focus={{ boxShadow: 'none' }}
+                whileHover={hoverLiftTarget}
               >
                 <Icon w={6} h={6} as={socMedia.icon} color="currentColor" />
-              </Link>
+              </MotionLink>
             ))}
           </MotionBox>
         </MotionStack>

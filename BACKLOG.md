@@ -37,19 +37,19 @@ Critères d'acceptation :
 
 Implémenté dans `config/theme.ts` (colors `night`/`accent`, `semanticTokens`, `fonts`/`fontWeights`/`textStyles`, `sizes`), `config/animations.ts` (5 animations signature + contreparties reduced-motion), `pages/_document.tsx` (ajout police JetBrains Mono). Détails et ratios de contraste dans `.claude/memory/designer.md`. Aucun composant de section modifié (Hero/About/Experience/Projects/Contact repoussés à US-003+).
 
-**Non vérifié visuellement** : les outils `mcp__playwright__*` n'étaient pas chargés dans cette session (redémarrage nécessaire). Le changement de fond/texte global (`styles.global`) affecte déjà le rendu réel de l'app — recommandé qu'un agent avec Playwright actif (tester ou designer en session fraîche) confirme le rendu avant de considérer la fondation visuellement validée.
+**Vérifié visuellement a posteriori** par le PO via `mcp__chrome-devtools__*` (désormais disponible dans sa session) avant commit : fond/texte global correct en clair et sombre, desktop et mobile, aucune régression. Les outils `mcp__playwright__*` restaient non chargés côté agent `designer` au moment de la tâche (limite connue, nécessite redémarrage de Claude Code).
 
 ## US-003 — Refonte Hero / Sidebar
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : transformer la Sidebar actuelle en une introduction cinématique forte, sans perdre les vraies données (nom, titre, bio, CTA contact, réseaux sociaux).
 
 Critères d'acceptation :
-- [ ] Nom, titre "Développeur Frontend", bio réelle conservés.
-- [ ] CTA contact et liens réseaux sociaux réels conservés et fonctionnels.
-- [ ] Animation d'entrée élégante, performante.
-- [ ] Rendu desktop + mobile vérifié.
+- [x] Nom, titre "Développeur Frontend", bio réelle conservés. Vérifié par lecture du HTML généré côté serveur (`curl` sur `/`) : "Solofomahery D.", "RAKOTONINDRINA", "Développeur Frontend" et le texte de bio réel sont bien présents.
+- [x] CTA contact et liens réseaux sociaux réels conservés et fonctionnels. Vérifié par `curl` sur le HTML généré : `href="mailto:maeryrakotonidrina17@gmail.com"` (coquille connue intacte, hors scope US-007) et les 4 hrefs réseaux sociaux (Instagram/LinkedIn/GitHub/Facebook) inchangés.
+- [x] Animation d'entrée élégante, performante (`heroBoot` + cascade `staggerChildren`, contrepartie reduced-motion via `useReducedMotion()`). Vérifiée visuellement par le PO via `mcp__chrome-devtools__*` (disponible dans sa session) : rendu correct, pas de saccade.
+- [x] Rendu desktop + mobile vérifié. Vérifié visuellement par le PO via `mcp__chrome-devtools__*` : desktop (1440px) et mobile (375px), modes clair et sombre, aucun débordement horizontal, pas d'erreur console. `mcp__playwright__*` restait non chargé côté agent `developer` (limite connue depuis US-002, serveur MCP pas encore actif après redémarrage) — contournée en vérifiant depuis la session PO.
 
 ## US-004 — Refonte About (Detail + SkillSetModal)
 **Priorité :** Moyenne
