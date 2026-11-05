@@ -187,11 +187,11 @@ Critères d'acceptation :
 Objectif : poser le scroll à inertie global (Lenis) qui sert de fondation à toutes les scènes scrubbed des US suivantes, sans rien casser de l'existant.
 
 Critères d'acceptation :
-- [ ] `lenis` installé (`^1.3.27`), scroll à inertie actif globalement sur desktop, amorti réduit sur tactile (proche du scroll natif), désactivé (retour au scroll natif pur) sous `prefers-reduced-motion` (`respectReducedMotion: true` natif de Lenis).
-- [ ] Les 4 ancres du `Menu` (`#aboutMe`, `#jobs`, `#works`, `#contact`) continuent de fonctionner via l'option native `anchors: true` de Lenis — aucune régression sur US-008/US-010 (focus clavier, accessibilité du menu).
-- [ ] GSAP installé (`^3.15.1`, ScrollTrigger inclus dans le même package) et synchronisé avec Lenis via le snippet officiel (`lenis.on('scroll', ScrollTrigger.update)` + `gsap.ticker.add` + `lagSmoothing(0)`) — pas encore utilisé par une vraie scène (ça viendra avec US-018 Projects), juste la fondation posée et vérifiée fonctionnelle.
-- [ ] `position: fixed` de la Sidebar (US-003) testé explicitement avec Lenis actif, y compris sur Safari (limitation connue documentée par Lenis sur macOS pre-M1).
-- [ ] Aucune régression sur le reste du site (toutes les US de la Phase 1 revérifiées rapidement après cette fondation).
+- [x] `lenis` installé (`^1.3.27`), scroll à inertie actif globalement sur desktop, amorti réduit sur tactile (proche du scroll natif), désactivé (retour au scroll natif pur) sous `prefers-reduced-motion` (`respectReducedMotion: true` natif de Lenis).
+- [x] Les 4 ancres du `Menu` (`#aboutMe`, `#jobs`, `#works`, `#contact`) continuent de fonctionner via l'option native `anchors: true` de Lenis — aucune régression sur US-008/US-010 (focus clavier, accessibilité du menu).
+- [x] GSAP installé (`^3.15.1`, ScrollTrigger inclus dans le même package) et synchronisé avec Lenis via le snippet officiel (`lenis.on('scroll', ScrollTrigger.update)` + `gsap.ticker.add` + `lagSmoothing(0)`) — pas encore utilisé par une vraie scène (ça viendra avec US-018 Projects), juste la fondation posée et vérifiée fonctionnelle.
+- [ ] `position: fixed` de la Sidebar (US-003) testé explicitement avec Lenis actif, y compris sur Safari (limitation connue documentée par Lenis sur macOS pre-M1). **Partiellement vérifié** : confirmé fonctionnel sur Chromium (position inchangée après scroll profond, voir `screenshots/us012-desktop-sidebar-fixed-scrolled.png`). Safari/macOS non testable depuis cette machine Windows — reste à vérifier par l'utilisateur.
+- [x] Aucune régression sur le reste du site (toutes les US de la Phase 1 revérifiées rapidement après cette fondation).
 
 ## US-013 — Hero/Sidebar : séquence de boot
 **Priorité :** Haute

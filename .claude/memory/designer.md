@@ -70,6 +70,26 @@ Les outils `mcp__playwright__*` n'étaient **pas chargés** dans cette session (
 ## Patterns de layout validés
 - (à compléter au fil des tâches — US-002 est fondations uniquement, pas de layout de section encore construit)
 
+## Proposition V2 "Boot Sequence" (2026-11-05, DESIGN_PROPOSAL_V2.md — pas encore implémentée)
+
+L'utilisateur a rejeté le résultat US-002→US-010 : "toujours un site classique avec des sections statiques", retour au restylage visuel sans vraie expérience interactive. Proposition écrite complète dans `DESIGN_PROPOSAL_V2.md` (racine du projet) — **aucun composant modifié**, uniquement un document de proposition. À lire en entier avant toute implémentation future ; résumé ci-dessous pour retrouver le contexte sans tout relire.
+
+**Gardé** : palette `night`/`accent`, Poppins + JetBrains Mono, concept "DEVELOPER.EXE", les 4 ancres réelles + `components/Menu` existant (ne pas remplacer, déjà accessible/testé), toutes les vraies données sans invention, règle dure zéro métrique de compétence inventée, `prefers-reduced-motion` prioritaire, le `position: fixed` déjà existant de la Sidebar sur `xl`.
+
+**Changé radicalement** :
+- Scroll natif → scroll à inertie global via **Lenis** (nouvelle dépendance, fondation du reste).
+- Chaque section a un mécanisme de scroll **distinct** (pas de `scrollReveal` générique répété 4 fois) : Hero = séquence de boot au chargement (scramble texte + grille parallaxe souris, ambiant en permanence car Sidebar fixe) ; About = balayage `clip-path` scrubbed avec `position: sticky` court (Framer Motion `useScroll`/`useTransform`, pas de GSAP) ; Experience = ligne de timeline qui se dessine proportionnellement au scroll (`pathLength`/`scaleY`, pas de pin) ; Skills = overlay plein écran "carte de relations" radiale (desktop) / accordéon (mobile), remplace la petite Modal Chakra, toujours binaire (aucun niveau/%) ; Projects = galerie horizontale en pin+scrub (**GSAP + ScrollTrigger**, seule section qui le justifie) avec morph `layoutId` carte→détail, fallback mobile en `scroll-snap` natif ; Contact = scène de clôture avec forme 3D filaire ambiante (**React Three Fiber + drei**, lazy/`ssr:false`, montée seulement au scroll jusqu'à la section — seul usage 3D du site, concentré).
+- Fil conducteur global : cadre HUD + jauge de progression ("SCÈNE 02/05"), complément du Menu (pas un remplacement) — donne enfin un usage réel aux tokens `navIndicatorTransition`/`navIndicatorReducedTransition` posés en US-002 et jamais câblés (dette documentée en US-008).
+- Curseur personnalisé desktop (`hover:hover and pointer:fine` uniquement) : anneau à ressort (Framer Motion `useSpring`), états contextuels (grossit + label "VOIR"/"+" selon la cible, jamais générique), effet magnétique limité à 3 familles de cibles (icônes sociales Hero, nœuds Skills, repères de la jauge) — pas généralisé à tout élément cliquable.
+
+**Dépendances nouvelles proposées (3 seulement, chacune justifiée par un seul usage)** : Lenis (scroll global), GSAP+ScrollTrigger (Projects uniquement), React Three Fiber+drei (Contact uniquement, lazy). Tout le reste (Hero, About, Experience, Skills, HUD, curseur) reste Framer Motion pur, déjà installé. Décision d'installation réelle = au developer après vérification de faisabilité/perf, pas pré-tranchée ici.
+
+**Équivalents mobile systématiquement pensés** (pas de simple "on désactivera") : pas de parallaxe souris (pas de pointeur) mais le reste de l'effet (scramble, balayage, ligne qui se dessine) survit souvent identique ; pin desktop → scroll-snap natif ou déclenchement simple au viewport ; curseur custom → badges d'affordance statiques toujours visibles (pas cachés derrière un survol qui n'existe pas) ; magnétisme → absent (pas de sens sur tap).
+
+**`prefers-reduced-motion` pensé section par section** (pas un futur correctif) : Lenis désactivé (retour scroll natif) ; Hero sans scramble (fondu simple) ni parallaxe ; About sans scrub/clip-path directionnel (fondu seul, pas de sticky) ; Experience ligne déjà tracée au repos ; Skills sans pouls/spring (crossfade quasi instantané) ; Projects **fallback intégral** vers la grille statique 2×2 déjà existante (US-006), pas de pin du tout ; Contact canvas 3D **non monté** (pas juste figé) ; curseur personnalisé **entièrement désactivé**, retour curseur système.
+
+**Risques déjà notés pour le developer** : perf/Core Web Vitals de GSAP/R3F (code-splitting strict, rien sur le chemin critique du Hero), scroll-jacking Projects à tester réellement (molette/trackpad/tactile, pas en lecture de code), `ScrollTrigger.matchMedia` à vérifier au resize réel, interaction Lenis + ancres du Menu (`lenis.scrollTo`) à vérifier explicitement, ne pas régresser le focus clavier visible en ajoutant le curseur custom, repartir des acquis a11y déjà validés (focus trap/Escape/aria) pour l'overlay Skills plutôt que les refaire.
+
 ## Choix de design et pourquoi
 - Un seul accent "bleu électrique" dans toute l'app (`accent.default`), jamais une 2e couleur d'accent — cohérent avec la checklist `ui-ux-pro` ("pas plus de 3 couleurs d'accent") et avec l'esprit HUD minimaliste demandé.
 - JetBrains Mono ajoutée uniquement pour les éléments HUD (jamais le texte courant) pour éviter de diluer l'identité typographique existante (Poppins) tout en servant le concept ".EXE".
