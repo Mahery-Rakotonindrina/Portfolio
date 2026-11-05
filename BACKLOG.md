@@ -176,6 +176,155 @@ Critères d'acceptation :
 
 ---
 
+# Phase 2 — "Boot Sequence" : expérience immersive
+
+> Déclenchée par le retour explicite de l'utilisateur après la Phase 1 (US-001 à US-011) : "Le portfolio ressemble toujours à un site classique avec des sections statiques [...] Ce n'est absolument pas le résultat que je recherche." La Phase 1 reste acquise (données, accessibilité, palette/typo, responsive) — cette phase change la mécanique de navigation et le comportement de chaque section, pas leur habillage. Proposition complète : `DESIGN_PROPOSAL_V2.md`. Évaluation de faisabilité technique : `.claude/memory/developer.md`. Utilisateur absent pour la journée — arbitrage proposition/faisabilité fait par le PO en autonomie (feu vert designer + feu vert technique developer, aucun point bloquant remonté), à faire valider par l'utilisateur ce soir à son retour.
+
+## US-012 — Fondation : scroll à inertie (Lenis) + intégration GSAP/Framer Motion
+**Priorité :** Haute (bloquant pour toutes les US suivantes de cette phase)
+**Statut :** À faire
+
+Objectif : poser le scroll à inertie global (Lenis) qui sert de fondation à toutes les scènes scrubbed des US suivantes, sans rien casser de l'existant.
+
+Critères d'acceptation :
+- [ ] `lenis` installé (`^1.3.27`), scroll à inertie actif globalement sur desktop, amorti réduit sur tactile (proche du scroll natif), désactivé (retour au scroll natif pur) sous `prefers-reduced-motion` (`respectReducedMotion: true` natif de Lenis).
+- [ ] Les 4 ancres du `Menu` (`#aboutMe`, `#jobs`, `#works`, `#contact`) continuent de fonctionner via l'option native `anchors: true` de Lenis — aucune régression sur US-008/US-010 (focus clavier, accessibilité du menu).
+- [ ] GSAP installé (`^3.15.1`, ScrollTrigger inclus dans le même package) et synchronisé avec Lenis via le snippet officiel (`lenis.on('scroll', ScrollTrigger.update)` + `gsap.ticker.add` + `lagSmoothing(0)`) — pas encore utilisé par une vraie scène (ça viendra avec US-018 Projects), juste la fondation posée et vérifiée fonctionnelle.
+- [ ] `position: fixed` de la Sidebar (US-003) testé explicitement avec Lenis actif, y compris sur Safari (limitation connue documentée par Lenis sur macOS pre-M1).
+- [ ] Aucune régression sur le reste du site (toutes les US de la Phase 1 revérifiées rapidement après cette fondation).
+
+## US-013 — Hero/Sidebar : séquence de boot
+**Priorité :** Haute
+**Statut :** À faire
+
+Objectif : transformer le chargement en mise en scène du démarrage de "DEVELOPER.EXE" (journal de boot avec les vraies données, décodage du nom par scramble, grille en profondeur réactive à la souris).
+
+Critères d'acceptation :
+- [ ] Journal de boot (vraies données déjà affichées ailleurs, aucun texte inventé) en cascade typewriter au montage, une seule fois.
+- [ ] Décodage du nom par effet scramble (hook custom maison, aucune dépendance), stagger lettre par lettre.
+- [ ] Grille en perspective CSS en arrière-plan, parallaxe douce à la souris (desktop uniquement, `useSpring`), active en permanence (pas seulement au chargement) puisque la Sidebar reste fixe sur desktop.
+- [ ] Mobile/tablette : boot log + scramble conservés à l'identique (pas de dépendance au pointeur), grille statique (pas de parallaxe), pas de flottement idle de l'avatar.
+- [ ] `prefers-reduced-motion` : scramble supprimé (fondu simple), boot log affiché d'un bloc, grille statique sans réaction souris, aucun flottement.
+- [ ] Aucune régression sur les vraies données (nom, titre, bio, CTA contact, réseaux sociaux — toujours affichés et fonctionnels).
+
+## US-014 — Fil conducteur : cadre HUD + jauge de progression
+**Priorité :** Moyenne
+**Statut :** À faire
+
+Objectif : câbler enfin les tokens `navIndicatorTransition`/`navIndicatorReducedTransition` (posés en US-002, jamais utilisés, dette documentée en US-008) en une jauge de progression à travers les 5 scènes, complémentaire au `Menu` existant (pas un remplacement).
+
+Critères d'acceptation :
+- [ ] Desktop : cadre HUD fin aux bords de l'écran + jauge latérale avec 5 repères numérotés, repère actif en `accent.default`, chaque repère cliquable et atteignable au clavier (scrolle vers l'ancre correspondante).
+- [ ] Mobile : barre fine en haut, pas de repères cliquables individuels (la navigation par ancre reste via le Menu hamburger).
+- [ ] `prefers-reduced-motion` : remplissage de la jauge en saut instantané (pas de transition animée), changement de couleur des repères sans pulsation.
+- [ ] Le `Menu` existant (US-008/US-010) reste la navigation accessible de référence, intact — aucune régression dessus.
+
+## US-015 — About : révélation scrubbed par balayage
+**Priorité :** Moyenne
+**Statut :** À faire
+
+Objectif : remplacer le `scrollReveal` générique du texte de présentation par une révélation pilotée par la position de scroll (`clip-path`), avec un teaser orbital sur le CTA compétences.
+
+Critères d'acceptation :
+- [ ] Desktop : verrouillage bref (`position: sticky`, pas de GSAP nécessaire) pendant lequel chaque bloc de texte réel se révèle par balayage `clip-path` à un seuil de progression distinct.
+- [ ] Teaser au survol du CTA "Mon attirail de développeur" : libellés des 9 catégories réelles de `config/skills.ts` qui orbitent légèrement près du curseur (aucune métrique, juste les noms).
+- [ ] Mobile/tablette : même effet visuel de balayage mais déclenché à l'entrée dans le viewport (pas de verrouillage de scroll), pas de teaser orbital (pas de survol tactile).
+- [ ] `prefers-reduced-motion` : fondu d'opacité simple, pas de verrouillage de scroll, pas de teaser orbital.
+- [ ] Texte de présentation réel conservé intégralement (aucune réécriture de contenu).
+
+## US-016 — Skills : overlay plein écran en carte de relations
+**Priorité :** Moyenne
+**Statut :** À faire
+
+Objectif : remplacer la `Modal` Chakra actuelle (US-004) par un overlay plein écran présentant les 9 catégories réelles comme des nœuds reliés, en conservant tous les acquis d'accessibilité (focus trap, `Escape`, `aria-*` — US-004/US-010).
+
+Critères d'acceptation :
+- [ ] Desktop : disposition radiale des 9 catégories autour d'un centre, traits de connexion animés au survol (`stroke-dashoffset`), compétences réelles en chips au survol/clic (épinglage au clic).
+- [ ] Mobile/tablette : accordéon vertical des 9 catégories (disposition radiale non tactile), même comportement de dépliement des compétences réelles.
+- [ ] `prefers-reduced-motion` : pas de pouls lumineux animé, dépliage quasi instantané, chips directement à l'état final.
+- [ ] Toutes les compétences réelles de `config/skills.ts` restent accessibles, aucune métrique/niveau/pourcentage inventé (contrainte dure héritée d'US-004).
+- [ ] Accessibilité : focus trap, fermeture `Escape`, navigation clavier — repart des acquis US-004/US-010, aucune régression.
+
+## US-017 — Experience : timeline qui se dessine au scroll
+**Priorité :** Moyenne
+**Statut :** À faire
+
+Objectif : rendre le tracé de la timeline (US-005) proportionnel à la progression du scroll, chaque point s'allumant quand le tracé l'atteint, synchronisé avec la révélation de la carte correspondante.
+
+Critères d'acceptation :
+- [ ] Tracé SVG (ou `scaleY`) piloté par `useScroll`/`useTransform` (Framer Motion, pas de GSAP nécessaire), mécanisme identique desktop/mobile.
+- [ ] Chaque point (Domoti, Vivetic, Pushtech, données réelles de `config/experience.tsx`) s'allume en `accent.default` exactement quand le tracé l'atteint, carte correspondante révélée au même instant.
+- [ ] `prefers-reduced-motion` : ligne entièrement tracée dès l'entrée dans le viewport, tous les points déjà allumés, cartes en fondu simple.
+- [ ] Les 3 entreprises, durées et descriptions réelles conservées intégralement (acquis US-005).
+
+## US-018 — Projects : galerie horizontale pilotée par le scroll (GSAP)
+**Priorité :** Haute
+**Statut :** À faire
+
+Objectif : remplacer la grille statique 2×2 (US-006) par une galerie en défilement horizontal piloté par le scroll vertical (pin + scrub GSAP ScrollTrigger), avec vue de détail en morph et fallback statique en `prefers-reduced-motion`.
+
+Critères d'acceptation :
+- [ ] `@react-three/fiber`/GSAP installés avec les versions validées par le developer ; pin GSAP ScrollTrigger desktop, `ScrollTrigger.matchMedia` pour le switch desktop/mobile testé réellement au resize (pas seulement au chargement).
+- [ ] Les 4 projets réels (Becquet!, GIPROD Androy, E-Kaly, GESCOM) et leurs vraies données conservés intégralement ; le lien "voir le projet" ne s'affiche que pour une vraie URL externe valide (logique `isExternalProjectLink` d'US-006 conservée à l'identique — seule E-Kaly doit l'afficher).
+- [ ] Survol (desktop) : scale image + overlay révélant index/titre/lien conditionnel. Clic : morph `layoutId` vers une vue de détail avec le texte complet réel (aucun mot inventé).
+- [ ] Mobile/tactile : pas de scroll-jacking — swipe horizontal natif (`scroll-snap`), `data-lenis-prevent` posé sur le conteneur pour ne pas perturber le swipe natif (point remonté par le developer en faisabilité).
+- [ ] `prefers-reduced-motion` : pin + scroll-jacking entièrement désactivés, retour à la grille statique 2×2 existante (US-006) comme filet de sécurité — contenu identique, mécanique différente seulement.
+- [ ] Le composant Projects (markup/texte réel) ne doit jamais être rendu `ssr:false` dans son ensemble (seule la logique GSAP est client-only) — pas de régression SEO par rapport à US-006.
+
+## US-019 — Contact : scène de clôture avec forme 3D ambiante
+**Priorité :** Moyenne
+**Statut :** À faire
+
+Objectif : scène finale avec une forme filaire 3D minimaliste (React Three Fiber), rappel de l'effet scramble du Hero sur l'email, copie en un clic.
+
+Critères d'acceptation :
+- [ ] `@react-three/fiber@^8.18.0` + `@react-three/drei@^9.122.0` + `three@^0.187.0` (versions exactes validées par le developer — jamais un install nu qui résoudrait sur une version React 19-only incompatible).
+- [ ] Chargement `next/dynamic(ssr:false)`, montage uniquement quand Contact entre dans le viewport (réutilise le pattern `useInView` déjà présent dans `GetInTouch`) — zéro coût sur le chargement initial du site.
+- [ ] Forme 3D : rotation autonome lente, réagit légèrement à la souris en offset additif (desktop), rotation autonome seule sur mobile (pas de demande de permission gyroscope).
+- [ ] Email réel et lien GitHub réel conservés et fonctionnels (`mailto:` existant intact) ; clic sur l'email copie dans le presse-papiers en plus, avec confirmation visuelle.
+- [ ] `prefers-reduced-motion` : le canvas 3D n'est **pas monté du tout** (ni chargé ni rendu statique), remplacé par un fond décoratif plat ; scramble de l'email devient un fondu simple.
+
+## US-020 — Curseur personnalisé et micro-interactions desktop
+**Priorité :** Basse
+**Statut :** À faire
+
+Objectif : curseur personnalisé contextuel (desktop uniquement, `@media (hover: hover) and (pointer: fine)`) avec effet magnétique ciblé sur 3 familles d'éléments précises.
+
+Critères d'acceptation :
+- [ ] Anneau qui suit le pointeur avec ressort (`useSpring`), états contextuels précis (grossit sur lien/bouton générique, label "VOIR" sur une carte Projects avec vrai lien uniquement, "+" sur un nœud Skills).
+- [ ] Effet magnétique limité à 3 familles de cibles (icônes sociales Hero, nœuds Skills, repères de la jauge HUD) — pas généralisé à tout élément cliquable.
+- [ ] Mobile/tactile : curseur personnalisé entièrement absent ; les affordances qu'il portait ("VOIR", "+") deviennent des badges statiques toujours visibles.
+- [ ] `prefers-reduced-motion` : curseur personnalisé entièrement désactivé (retour au curseur système), affordances en badges statiques (même traitement que mobile).
+- [ ] Ne masque jamais l'indicateur de focus clavier natif (acquis d'accessibilité US-010 préservé).
+
+## US-021 — QA et accessibilité Phase 2
+**Priorité :** Haute
+**Statut :** À faire
+
+Objectif : vérification QA indépendante de toute la Phase 2 avant mise à jour finale de la PR, équivalent d'US-010 pour les nouveaux éléments.
+
+Critères d'acceptation :
+- [ ] Build et lint passent avec les 3 nouvelles dépendances installées.
+- [ ] Perf/Core Web Vitals mesurés réellement (Lighthouse ou équivalent) — pas juste l'estimation de faisabilité, une mesure après implémentation complète.
+- [ ] `prefers-reduced-motion` vérifié scène par scène (pas qu'une vérification globale) : chaque fallback décrit dans `DESIGN_PROPOSAL_V2.md` fonctionne réellement.
+- [ ] Accessibilité clavier revérifiée sur les nouveaux éléments (jauge HUD, overlay Skills radial, morph détail Projects, curseur) — aucune régression sur les acquis US-010.
+- [ ] Responsive vérifié aux 3 largeurs sur toutes les nouvelles scènes.
+- [ ] `ScrollTrigger.matchMedia` testé au resize réel (pas qu'au chargement à largeur fixe) — piège explicitement remonté par le developer en faisabilité.
+- [ ] Safari testé explicitement (limitation connue Lenis + `position: fixed` sur macOS pre-M1).
+- [ ] Aucune régression sur la Phase 1 (US-001 à US-011) dans son ensemble.
+
+## US-022 — Mise à jour de la Pull Request existante
+**Priorité :** Haute
+**Statut :** À faire
+
+Objectif : pousser tous les commits de la Phase 2 sur la branche `feature/portfolio-redesign` existante (la PR déjà ouverte par l'utilisateur vers `develop` se met à jour automatiquement — pas de nouvelle PR à créer) et fournir un résumé final en français des changements de cette phase.
+
+Critères d'acceptation :
+- [ ] Tous les commits de la Phase 2 poussés sur `feature/portfolio-redesign`, messages clairs, aucune mention d'IA.
+- [ ] Résumé final en français fourni à l'utilisateur : ce qui a changé par rapport à la Phase 1, les nouvelles dépendances ajoutées et pourquoi, les points de vigilance restants.
+
+---
+
 ## Audit — points faibles et bugs identifiés (US-001)
 
 - **CV téléchargeable : fonctionnalité inexistante.** Le seul PDF dans `public/` (`LawingcoMarcJhon2021v2.pdf`) n'est référencé nulle part dans le code et porte un nom qui ne correspond pas à l'utilisateur — ce n'est manifestement pas le vrai CV. Aucun bouton de téléchargement de CV n'existe actuellement. **Décision : ne pas fabriquer de faux CV/lien** ; le Hero sera conçu sans CTA de téléchargement CV fonctionnel, à ajouter plus tard si un vrai fichier est fourni.
