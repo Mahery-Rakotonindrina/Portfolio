@@ -151,17 +151,17 @@ Recoupement QA (US-010) effectué dans la même passe : lint/typecheck, ancres, 
 
 ## US-010 — QA et optimisation
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : vérification QA indépendante avant finalisation.
 
 Critères d'acceptation :
-- [ ] Build et lint passent.
-- [ ] Navigation/liens/ancres vérifiés réellement (Playwright).
-- [ ] Accessibilité vérifiée (contrastes, clavier, alt text).
-- [ ] Pas d'erreur console.
-- [ ] Responsive vérifié aux 3 largeurs.
-- [ ] Aucune régression sur les fonctionnalités existantes (modal compétences, tabs expériences, dark/light mode).
+- [x] Build et lint passent. `npm run build` (production, pas juste dev) vérifié propre par le PO après arrêt du serveur dev, aucune erreur. `npm run lint` vert à chaque étape.
+- [x] Navigation/liens/ancres vérifiés réellement (Playwright/contournement équivalent). Voir US-009 — les 4 ancres cliquées réellement, `scrollY` confirmé.
+- [x] Accessibilité vérifiée (contrastes, clavier, alt text). Audit complet par le testeur (axe-core + vérifications manuelles) : contrastes OK partout (clair/sombre), alt text présent et pertinent sur les 8 images du site. 5 findings clavier trouvés et traités : **corrigés** — bouton hamburger sans nom accessible (`aria-label`/`aria-expanded`/`aria-controls` ajoutés), absence de piège de focus dans le menu mobile ouvert (`inert` posé sur le contenu principal pendant l'ouverture), `Escape` ne fermait pas le menu (ajouté, rend le focus au bouton). Lien "mail" (GetInTouch) pas assez distinguable sans la couleur — soulignement ajouté. Un 5e point (soulignement de focus apparemment neutralisé sur la nav) a été **investigué et laissé tel quel** : vérifié par mesure réelle (`getComputedStyle` avant/après hover/focus) que ce n'était pas un bug — le lien change bien visuellement au survol/focus, le finding initial était basé sur une lecture du CSS sans mesure. Tout re-vérifié par le PO via `mcp__chrome-devtools__*` : hamburger nommé, focus piégé (`inert` confirmé), `Escape` ferme et rend le focus, lien mail souligné.
+- [x] Pas d'erreur console. Aucune erreur imputable au code applicatif sur l'ensemble du site, 3 largeurs × 2 thèmes. Seul résidu documenté et accepté comme hors scope : un warning `transform` sous `prefers-reduced-motion` sur `Sidebar` (tokens partagés `heroBoot`/`scrollReveal` de `config/animations.ts`, cosmétique — quelques pixels de décalage, pas de dysfonctionnement), à corriger seulement si le PO arbitre un jour de toucher ces tokens partagés par toutes les sections déjà "Terminé".
+- [x] Responsive vérifié aux 3 largeurs. Voir US-009 (passe complète 375/768/1280px × clair/sombre, toutes sections).
+- [x] Aucune régression sur les fonctionnalités existantes. Modal de compétences (9 catégories, ouverture clavier/souris, `Escape` ferme et rend le focus), dark/light mode (toggle desktop et mobile), navigation par ancre, galerie Projects (lien conditionnel), timeline Experience (remplace les anciens tabs — comportement équivalent, lecture sans clic requis). Rien cassé par les correctifs d'accessibilité (cycle ouverture/fermeture du menu re-testé après coup, y compris sous `prefers-reduced-motion`).
 
 ## US-011 — Finalisation Git / Pull Request
 **Priorité :** Haute

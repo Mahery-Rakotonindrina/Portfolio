@@ -11,7 +11,7 @@ import {
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { motion, useCycle, useReducedMotion, Variants } from 'framer-motion'
 import styles from './styles.module.css'
-import MobileMenu from './toggle'
+import MobileMenu, { MOBILE_NAV_ID, MOBILE_MENU_TOGGLE_ID } from './toggle'
 import { ThemeMode, mobileBreakpointsMap } from 'config/theme'
 import { easing, menuAnim } from 'config/animations'
 import useScrollDirection, { ScrollDirection } from 'hooks/useScrollDirection'
@@ -94,6 +94,48 @@ const Navigation = () => {
   )
   const scrollDirection = useScrollDirection()
 
+  // Finding a11y US-010 #2 : sans ceci, `Tab` continue vers les liens de
+  // `#mainGrid` (pages/index.tsx) une fois les 4 liens de nav mobile
+  // tabulés — invisibles sous l'overlay plein écran mais toujours
+  // atteignables au clavier. `inert` (attribut HTML natif) retire tout le
+  // contenu principal de l'ordre de tabulation et de l'arbre d'accessibilité
+  // tant que le menu mobile est ouvert. `Menu`/`Navigation` sont un sibling
+  // de `#mainGrid`, jamais rendus inertes eux-mêmes.
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return undefined
+    }
+    const mainContent = document.getElementById('mainGrid')
+    if (!mainContent) {
+      return undefined
+    }
+    if (isMobile && isOpen) {
+      mainContent.setAttribute('inert', '')
+    } else {
+      mainContent.removeAttribute('inert')
+    }
+    return () => {
+      mainContent.removeAttribute('inert')
+    }
+  }, [isMobile, isOpen])
+
+  // Finding a11y US-010 #3 : `Escape` ferme le menu mobile ouvert et rend le
+  // focus au bouton hamburger, convention standard pour un overlay plein
+  // écran.
+  useEffect(() => {
+    if (!isMobile || !isOpen) {
+      return undefined
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        toggleOpen()
+        document.getElementById(MOBILE_MENU_TOGGLE_ID)?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isMobile, isOpen, toggleOpen])
+
   return (
     <>
       <Box
@@ -116,6 +158,7 @@ const Navigation = () => {
       </Box>
 
       <MotionContainer
+        id={MOBILE_NAV_ID}
         width="100%"
         // US-009 (bug trouvé par le tester) : un fond translucide
         // (`rgba(..., 0.9)`/`rgba(..., 0.95)`) laissait le contenu de la

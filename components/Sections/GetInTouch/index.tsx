@@ -101,6 +101,7 @@ const GetInTouch = () => {
           href="mailto:maeryrakotonindrina17@gmail.com"
           target="_blank"
           rel="noreferrer"
+          textDecoration="underline"
         >
           mail{' '}
         </Link>
