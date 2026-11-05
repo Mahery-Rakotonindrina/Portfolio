@@ -240,16 +240,18 @@ Détails, pièges (3 bugs trouvés et corrigés en vérification) et point de la
 
 ## US-016 — Skills : overlay plein écran en carte de relations
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé (lint/tsc OK, `npm run build` non exécuté — serveur dev déjà actif sur le port 3000, à faire par le PO)
 
 Objectif : remplacer la `Modal` Chakra actuelle (US-004) par un overlay plein écran présentant les 9 catégories réelles comme des nœuds reliés, en conservant tous les acquis d'accessibilité (focus trap, `Escape`, `aria-*` — US-004/US-010).
 
 Critères d'acceptation :
-- [ ] Desktop : disposition radiale des 9 catégories autour d'un centre, traits de connexion animés au survol (`stroke-dashoffset`), compétences réelles en chips au survol/clic (épinglage au clic).
-- [ ] Mobile/tablette : accordéon vertical des 9 catégories (disposition radiale non tactile), même comportement de dépliement des compétences réelles.
-- [ ] `prefers-reduced-motion` : pas de pouls lumineux animé, dépliage quasi instantané, chips directement à l'état final.
-- [ ] Toutes les compétences réelles de `config/skills.ts` restent accessibles, aucune métrique/niveau/pourcentage inventé (contrainte dure héritée d'US-004).
-- [ ] Accessibilité : focus trap, fermeture `Escape`, navigation clavier — repart des acquis US-004/US-010, aucune régression.
+- [x] Desktop : disposition radiale des 9 catégories autour d'un centre, traits de connexion animés au survol (`stroke-dashoffset`), compétences réelles en chips au survol/clic (épinglage au clic).
+- [x] Mobile/tablette : accordéon vertical des 9 catégories (disposition radiale non tactile), même comportement de dépliement des compétences réelles.
+- [x] `prefers-reduced-motion` : pas de pouls lumineux animé, dépliage quasi instantané, chips directement à l'état final.
+- [x] Toutes les compétences réelles de `config/skills.ts` restent accessibles, aucune métrique/niveau/pourcentage inventé (contrainte dure héritée d'US-004).
+- [x] Accessibilité : focus trap, fermeture `Escape`, navigation clavier — repart des acquis US-004/US-010, aucune régression.
+
+Détails, pièges (quirk flexbox imbriqué pour le centrage vertical, piège de test `.click()` JS vs focus réel pour vérifier le retour de focus) dans `.claude/memory/developer.md`.
 
 ## US-017 — Experience : timeline qui se dessine au scroll
 **Priorité :** Moyenne

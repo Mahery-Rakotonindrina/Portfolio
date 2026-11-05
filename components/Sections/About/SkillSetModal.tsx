@@ -1,4 +1,3 @@
-/* eslint-disable react/no-multi-comp */
 import {
   Text,
   Modal,
@@ -7,15 +6,11 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  List,
-  ListItem,
-  ListIcon,
-  SimpleGrid,
-  Divider,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { useReducedMotion } from 'framer-motion'
 import styles from './styles.module.css'
-import { Skill, SkillCategory, Skills, splitSkills } from 'config/skills'
+import SkillsRelationMap from './SkillsRelationMap'
 import { modalEnter, modalEnterReduced } from 'config/animations'
 
 type ISkillSetModal = {
@@ -23,83 +18,39 @@ type ISkillSetModal = {
   onClose(): void
 }
 
-// Intitulé affiché pour chaque catégorie de config/skills.ts. Le typage
-// Record<SkillCategory, string> force une erreur de compilation si une
-// catégorie est ajoutée sans intitulé : plus aucune compétence ne peut être
-// oubliée du modal (bug pré-existant corrigé ici — "cicd" et "games"
-// n'étaient jamais rendus, voir .claude/memory/developer.md).
-const categoryLabels: Record<SkillCategory, string> = {
-  backend: 'Backend',
-  frontend: 'Frontend',
-  cicd: 'CI/CD & Cloud',
-  database: 'Base de donnée',
-  'ui frameworks': 'Ui Frameworks',
-  'productivity boost': 'Productivity boosts',
-  mobile: 'Mobile Development',
-  games: 'Game Dev',
-  desktop: 'Desktop App',
-}
-
-const SkillList = ({
-  title,
-  columns,
-}: {
-  title: string
-  columns: Skill[][]
-}) => {
-  const [colOne, colTwo = []] = columns
-  return (
-    <>
-      <Text as="div" textStyle="label" color="text.secondary" paddingBottom={2}>
-        {title}
-      </Text>
-      <Divider marginBottom={4} borderColor="border.subtle" />
-      <SimpleGrid columns={2} spacing={4} paddingBottom={6}>
-        <List spacing={3}>
-          {colOne.map((item) => (
-            <ListItem
-              key={item.name}
-              fontSize="sm"
-              display="flex"
-              alignItems="center"
-            >
-              <ListIcon as={item.icon} color="accent.default" fontSize="2em" />
-              {item.name}
-            </ListItem>
-          ))}
-        </List>
-        <List spacing={3}>
-          {colTwo.map((item) => (
-            <ListItem
-              key={item.name}
-              fontSize="sm"
-              display="flex"
-              alignItems="center"
-            >
-              <ListIcon as={item.icon} color="accent.default" fontSize="2em" />
-              {item.name}
-            </ListItem>
-          ))}
-        </List>
-      </SimpleGrid>
-    </>
-  )
-}
+// US-016 — remplace l'ancienne petite Modal Chakra (listes de compétences,
+// US-004) par un overlay plein écran ("carte de relations", voir
+// DESIGN_PROPOSAL_V2 §4). Toujours la Modal Chakra en dessous (`size="full"`)
+// — tous les acquis d'accessibilité déjà validés (focus trap, fermeture
+// `Escape`, aria-* automatiques, retour de focus au déclencheur — US-004/
+// US-010) sont donc conservés sans rien réécrire : seul le contenu
+// (ModalBody) change, remplacé par <SkillsRelationMap />.
 const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
   const shouldReduceMotion = useReducedMotion()
-  // Object.keys() renvoie toujours string[] en TypeScript : cast sûr ici
-  // puisque Skills est typé `{ [key in SkillCategory]: Skill[] }` — toute
-  // catégorie ajoutée à config/skills.ts apparaît donc automatiquement ici.
-  const categories = Object.keys(Skills) as SkillCategory[]
+  // Fond flouté/obscurci demandé explicitement pour cet overlay plein écran
+  // (DESIGN_PROPOSAL_V2 §4) — un alpha par mode n'a pas d'équivalent dans les
+  // semantic tokens de config/theme.ts (qui ne couvrent que des couleurs
+  // pleines), d'où ce useColorModeValue ciblé plutôt qu'un nouveau token.
+  const overlayBg = useColorModeValue(
+    'rgba(237, 242, 247, 0.88)',
+    'rgba(11, 13, 18, 0.9)'
+  )
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="full"
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent
-        bg="bg.surface"
-        borderWidth="1px"
-        borderColor="border.subtle"
+        bg={overlayBg}
+        color="text.primary"
         borderRadius={0}
+        display="flex"
+        flexDirection="column"
+        sx={{ backdropFilter: 'blur(16px)' }}
         motionProps={{
           initial: 'initial',
           animate: 'animate',
@@ -115,14 +66,13 @@ const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
           </Text>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody className={styles.skillModal}>
-          {categories.map((category) => (
-            <SkillList
-              key={category}
-              title={categoryLabels[category]}
-              columns={splitSkills(Skills[category])}
-            />
-          ))}
+        <ModalBody
+          className={styles.skillModal}
+          display="flex"
+          flexDirection="column"
+          flex="1"
+        >
+          <SkillsRelationMap />
         </ModalBody>
       </ModalContent>
     </Modal>
