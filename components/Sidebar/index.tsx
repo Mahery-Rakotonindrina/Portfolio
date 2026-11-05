@@ -153,6 +153,12 @@ const Sidebar = () => {
             className={styles.marginTopForce}
             textTransform="uppercase"
             overflowWrap="break-word"
+            // Le nom de famille est un seul mot de 14 lettres : à la taille
+            // "hero" (jusqu'à 7xl), il ne tient jamais sur une ligne dans la
+            // colonne de 34% et coupe mal (ex. une seule lettre esseulée sur
+            // la 2e ligne). Taille réduite spécifiquement ici plutôt que sur
+            // le textStyle partagé (US-002, utilisé ailleurs potentiellement).
+            fontSize={{ base: '4xl', md: '5xl', xl: '5xl' }}
             sx={{ hyphens: 'auto', WebkitHyphens: 'auto', msHyphens: 'auto' }}
             variants={itemVariants}
             onAnimationStart={
