@@ -122,39 +122,7 @@ const GetInTouch = () => {
       viewport={{ once: true, amount: 0.3 }}
       variants={parentVariants}
     >
-      <Box
-        position="absolute"
-        inset={0}
-        zIndex={0}
-        overflow="hidden"
-        pointerEvents="none"
-        aria-hidden="true"
-      >
-        {effectiveReducedMotion && (
-          <Box position="absolute" inset={0} bg="accent.subtle" />
-        )}
-        {shouldMountCanvas && (
-          <Box position="absolute" inset={0}>
-            <ContactScene color={wireframeColor} interactive={isDesktop} />
-          </Box>
-        )}
-      </Box>
-
-      {/* position relative + zIndex garantissent la peinture au-dessus du
-          canvas (US-019) ; pointerEvents="none" laisse en revanche la souris
-          "traverser" ces blocs vers le canvas en arrière-plan sur tout leur
-          espace vide (sinon, en tant qu'éléments positionnés occupant toute
-          la largeur, ils intercepteraient le survol même là où ils n'ont
-          aucun contenu visible) — seuls les éléments réellement interactifs
-          ci-dessous ré-activent explicitement pointerEvents="auto". */}
-      <MotionText
-        as="h2"
-        textStyle="title"
-        position="relative"
-        zIndex={1}
-        pointerEvents="none"
-        variants={itemVariants}
-      >
+      <MotionText as="h2" textStyle="title" variants={itemVariants}>
         On discute ?{' '}
         <Text as="span" variant="emphasis" fontSize="inherit">
           <motion.div
@@ -170,9 +138,6 @@ const GetInTouch = () => {
       <MotionText
         variant="description"
         textStyle="body"
-        position="relative"
-        zIndex={1}
-        pointerEvents="none"
         variants={itemVariants}
       >
         Bon, je suis plutôt introverti de nature, mais je réponds toujours avec
@@ -184,7 +149,6 @@ const GetInTouch = () => {
           target="_blank"
           rel="noreferrer"
           textDecoration="underline"
-          pointerEvents="auto"
         >
           mail{' '}
         </Link>
@@ -192,9 +156,6 @@ const GetInTouch = () => {
       </MotionText>
 
       <MotionBox
-        position="relative"
-        zIndex={1}
-        pointerEvents="none"
         textAlign="center"
         variants={itemVariants}
         onAnimationStart={
@@ -210,29 +171,52 @@ const GetInTouch = () => {
         >
           Écris-moi directement
         </Text>
+        {/* La forme 3D (US-019) n'est plus un fond pleine section : à cette
+            taille, elle restait soit trop envahissante à pleine opacité,
+            soit trop délavée en la rendant discrète (deux retours de
+            l'utilisateur) — elle s'affiche désormais en petit à côté de
+            l'adresse elle-même, ni assez grande pour concurrencer le texte,
+            ni assez petite pour disparaître. */}
         <Box
-          as="button"
-          type="button"
-          onClick={onCopy}
-          aria-label={`Copier l'adresse e-mail ${EMAIL_ADDRESS}`}
-          pointerEvents="auto"
-          background="none"
-          border="none"
-          padding={0}
-          cursor="pointer"
-          fontFamily="mono"
-          fontSize={{ base: 'md', md: 'xl' }}
-          color={hasCopied ? 'accent.default' : 'text.primary'}
-          _hover={{ color: 'accent.default' }}
-          _focusVisible={{ boxShadow: 'outline' }}
-          sx={{ transition: 'color 0.2s ease' }}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={3}
+          flexWrap="wrap"
         >
-          <motion.span
-            style={{ display: 'inline-block' }}
-            whileTap={{ scale: 0.97 }}
+          <Box
+            as="button"
+            type="button"
+            onClick={onCopy}
+            aria-label={`Copier l'adresse e-mail ${EMAIL_ADDRESS}`}
+            background="none"
+            border="none"
+            padding={0}
+            cursor="pointer"
+            fontFamily="mono"
+            fontSize={{ base: 'md', md: 'xl' }}
+            color={hasCopied ? 'accent.default' : 'text.primary'}
+            _hover={{ color: 'accent.default' }}
+            _focusVisible={{ boxShadow: 'outline' }}
+            sx={{ transition: 'color 0.2s ease' }}
           >
-            {scrambledEmail}
-          </motion.span>
+            <motion.span
+              style={{ display: 'inline-block' }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {scrambledEmail}
+            </motion.span>
+          </Box>
+          {shouldMountCanvas && (
+            <Box
+              width={{ base: '56px', md: '72px' }}
+              height={{ base: '56px', md: '72px' }}
+              flexShrink={0}
+              aria-hidden="true"
+            >
+              <ContactScene color={wireframeColor} interactive={isDesktop} />
+            </Box>
+          )}
         </Box>
         <Text
           as="span"
