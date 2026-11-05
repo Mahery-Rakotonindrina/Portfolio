@@ -9,6 +9,7 @@ import {
 import dynamic from 'next/dynamic'
 import Script from 'next/script'
 import OpenGraphHead from 'components/Misc/OpenGraphHead'
+import ProgressHUD from 'components/Misc/ProgressHUD'
 import FadeInLayout from 'components/Layout/FadeWhenVisible'
 import Menu from 'components/Menu'
 import Sidebar from 'components/Sidebar'
@@ -45,6 +46,7 @@ const Portfolio = (): JSX.Element => {
       </Script>
       <OpenGraphHead />
       <Menu />
+      <ProgressHUD />
       <Grid
         id="mainGrid"
         templateColumns={{

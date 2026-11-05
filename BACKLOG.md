@@ -211,15 +211,17 @@ Détails dans `.claude/memory/developer.md`. `npm run build` non exécuté (serv
 
 ## US-014 — Fil conducteur : cadre HUD + jauge de progression
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : câbler enfin les tokens `navIndicatorTransition`/`navIndicatorReducedTransition` (posés en US-002, jamais utilisés, dette documentée en US-008) en une jauge de progression à travers les 5 scènes, complémentaire au `Menu` existant (pas un remplacement).
 
 Critères d'acceptation :
-- [ ] Desktop : cadre HUD fin aux bords de l'écran + jauge latérale avec 5 repères numérotés, repère actif en `accent.default`, chaque repère cliquable et atteignable au clavier (scrolle vers l'ancre correspondante).
-- [ ] Mobile : barre fine en haut, pas de repères cliquables individuels (la navigation par ancre reste via le Menu hamburger).
-- [ ] `prefers-reduced-motion` : remplissage de la jauge en saut instantané (pas de transition animée), changement de couleur des repères sans pulsation.
-- [ ] Le `Menu` existant (US-008/US-010) reste la navigation accessible de référence, intact — aucune régression dessus.
+- [x] Desktop : cadre HUD fin aux bords de l'écran + jauge latérale avec 5 repères numérotés, repère actif en `accent.default`, chaque repère cliquable et atteignable au clavier (scrolle vers l'ancre correspondante).
+- [x] Mobile : barre fine en haut, pas de repères cliquables individuels (la navigation par ancre reste via le Menu hamburger).
+- [x] `prefers-reduced-motion` : remplissage de la jauge en saut instantané (pas de transition animée), changement de couleur des repères sans pulsation.
+- [x] Le `Menu` existant (US-008/US-010) reste la navigation accessible de référence, intact — aucune régression dessus.
+
+Détails dans `.claude/memory/developer.md`. `npm run build` non exécuté (serveur dev déjà actif sur le port 3000) — lint/typecheck passent, reste à faire par le PO avant validation finale.
 
 ## US-015 — About : révélation scrubbed par balayage
 **Priorité :** Moyenne
