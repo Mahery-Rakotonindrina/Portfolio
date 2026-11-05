@@ -170,9 +170,9 @@ Critères d'acceptation :
 Objectif : committer, pousser la branche, ouvrir la PR vers `develop`.
 
 Critères d'acceptation :
-- [ ] Commits réguliers, messages clairs, aucune mention d'IA.
-- [ ] Branche poussée sur origin.
-- [ ] Pull Request créée vers `develop` (ou instructions manuelles si `gh` indisponible/non authentifié).
+- [x] Commits réguliers, messages clairs, aucune mention d'IA. 11 commits sur `feature/portfolio-redesign`, un par US (+ un correctif), aucune ligne de co-auteur/mention Claude/IA, conformément à `RULES.md`.
+- [x] Branche poussée sur origin. `git status -sb` confirme `feature/portfolio-redesign` à jour avec `origin/feature/portfolio-redesign`, 10 commits d'avance sur `origin/develop`.
+- [ ] Pull Request créée vers `develop`. `gh` CLI non installé sur cette machine (ni Bash ni PowerShell) — conformément à la consigne, pas d'installation d'outil supplémentaire pour ça : lien de création manuelle fourni à l'utilisateur à la place.
 
 ---
 
