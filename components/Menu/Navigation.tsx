@@ -1,7 +1,7 @@
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useEffect, useState, MouseEvent } from 'react'
 import {
   Container,
-  Button,
+  Link,
   Flex,
   Box,
   IconButton,
@@ -10,35 +10,87 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
-import { motion, useCycle } from 'framer-motion'
+import { motion, useCycle, useReducedMotion, Variants } from 'framer-motion'
 import styles from './styles.module.css'
 import MobileMenu from './toggle'
 import { ThemeMode, mobileBreakpointsMap } from 'config/theme'
 import { easing, menuAnim } from 'config/animations'
 import useScrollDirection, { ScrollDirection } from 'hooks/useScrollDirection'
 
+// Hissé au niveau module (pas dans le corps du composant) : `Navigation` a son
+// propre état local (`useCycle` pour le menu mobile) — si `MotionContainer`
+// était recréé à chaque render, React traiterait la nouvelle identité comme un
+// composant différent et démonterait/remonterait tout l'arbre à chaque
+// ouverture/fermeture du menu mobile (même piège que GetInTouch, US-007).
+const MotionContainer = motion(Container)
+
+// Contrepartie `prefers-reduced-motion` de `menuAnim` (config/animations.ts) :
+// fondu seul, sans glissement vertical. `y: 0` est explicite (pas omis) dans
+// les deux états — `menuAnim.hide.y` vaut -100 ; si `y` n'est jamais la cible
+// d'une transition vers `show`, Framer Motion laisse la valeur courante
+// inchangée au lieu de la réinitialiser, ce qui peut bloquer le menu hors-champ
+// (même piège que `mobileMenuVariantsReduced`, components/Menu/index.tsx).
+const menuAnimReduced: Variants = {
+  show: { opacity: 1, y: 0, transition: { duration: 0.01 } },
+  hide: { opacity: 0, y: 0, transition: { duration: 0.01 } },
+}
+
+interface NavItem {
+  label: string
+  href: string
+  // Cas particulier historique : sur desktop, "A propos" pointe vers `#`
+  // (retour en haut de page, où Sidebar + About sont déjà côte à côte) plutôt
+  // que vers `#aboutMe` — comportement existant conservé tel quel.
+  desktopHref?: string
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { label: 'A propos', href: '#aboutMe', desktopHref: '#' },
+  { label: 'Expériences', href: '#jobs' },
+  { label: 'Réalisations', href: '#works' },
+  { label: 'Contact', href: '#contact' },
+]
+
 const Navigation = () => {
   const { toggleColorMode, colorMode } = useColorMode()
-  const MotionContainer = motion(Container)
   const [isOpen, toggleOpen] = useCycle(false, true)
   const isMobile = useBreakpointValue(mobileBreakpointsMap)
-  const menuButtonSize = useBreakpointValue({
-    base: 'xl',
-    md: 'sm',
-  })
+
+  // `useReducedMotion()` (Framer Motion) résout `window.matchMedia(...)` de
+  // façon SYNCHRONE dès le premier appel client, y compris pendant le rendu
+  // d'hydratation lui-même (pas seulement après un effet) — contrairement au
+  // SSR, qui n'a pas de `window` et retombe donc toujours sur la variante
+  // normale. `MotionContainer` combine `variants` ET un `style` prop littéral
+  // calculé sur le même élément : la variante "hide" de `menuAnimReduced`
+  // fixe `y: 0` explicitement (nécessaire pour éviter le bug précédent de
+  // cette US — un menu mobile bloqué hors-écran), ce qui fait calculer à
+  // Framer un `transform: none` concret pendant ce premier rendu client — une
+  // valeur de `style` différente de celle rendue par le SSR
+  // (`transform: translateY(-100px)`), d'où le mismatch d'hydratation React.
+  // Pour les autres sections (Sidebar, Detail, Experience...), la variante
+  // `*Reduced` OMET `y` plutôt que de le fixer à 0 : Framer ne calcule alors
+  // aucune propriété `transform` du tout pour ce premier rendu, donc aucune
+  // valeur de `style` divergente à comparer — rien à avertir.
+  // Correctif : ne piloter `MotionContainer` qu'avec une valeur locale qui
+  // vaut `false` au premier rendu client (identique au SSR, par construction
+  // de `useState`), mise à jour seulement après montage via un effet. Le menu
+  // "rattrape" la bonne variante un instant après le montage — sans jamais
+  // rendre, y compris en hydratation, une valeur différente du SSR.
+  const prefersReducedMotion = useReducedMotion()
+  const [shouldReduceMotion, setShouldReduceMotion] = useState(false)
+  useEffect(() => {
+    setShouldReduceMotion(Boolean(prefersReducedMotion))
+  }, [prefersReducedMotion])
 
   const bg = useColorModeValue(
     'rgba(237, 242, 247, 0.95)',
-    'rgba(18, 18, 18, 0.9)'
+    'rgba(11, 13, 18, 0.9)'
   )
 
-  const borderColor = useColorModeValue('teal.500', 'cyan.200')
-
   const IsDark = colorMode === ThemeMode.Dark
-  const btnClassName = `${styles.blogBtn} ${!IsDark && styles.dark}`
   const Icon = IsDark ? SunIcon : MoonIcon
   const onMenuItemClick = useCallback(
-    (e) => {
+    (e: MouseEvent<HTMLAnchorElement>) => {
       e.stopPropagation()
       if (isMobile) {
         toggleOpen()
@@ -91,11 +143,11 @@ const Navigation = () => {
           opacity: !isOpen && isMobile ? 0 : undefined,
           left: isOpen && isMobile ? 0 : undefined,
         }}
-        borderColor={isOpen && isMobile && borderColor}
+        borderColor={isOpen && isMobile && 'accent.default'}
         borderBottomWidth={isOpen && isMobile && '1px'}
         paddingBottom={isOpen && isMobile && '1px'}
         ease={easing}
-        variants={menuAnim}
+        variants={shouldReduceMotion ? menuAnimReduced : menuAnim}
         marginTop={0}
         paddingTop={1}
         as="nav"
@@ -116,89 +168,30 @@ const Navigation = () => {
           paddingBottom={isMobile ? 10 : '0'}
           onClick={() => isMobile && toggleOpen()}
         >
-          <Box
-            width={{ base: '100%', lg: 'auto' }}
-            textAlign={{ base: 'center', lg: 'left' }}
-          >
-            <Button
-              fontWeight="light"
-              variant="ghost"
-              fontSize={menuButtonSize}
-              letterSpacing={2}
-              className={btnClassName}
-              padding={2}
-              marginX={2}
-              as="a"
-              href={isMobile ? '#aboutMe' : '#'}
-              rel="noreferrer"
-              onClick={onMenuItemClick}
+          {NAV_ITEMS.map((item) => (
+            <Box
+              key={item.href}
+              width={{ base: '100%', lg: 'auto' }}
+              textAlign={{ base: 'center', lg: 'left' }}
+              marginY={{ base: 2, lg: 0 }}
             >
-              A propos
-            </Button>
-          </Box>
-          <Box
-            width={{ base: '100%', lg: 'auto' }}
-            textAlign={{ base: 'center', lg: 'left' }}
-            marginY={{ base: 2, lg: 0 }}
-          >
-            <Button
-              fontWeight="light"
-              variant="ghost"
-              fontSize={menuButtonSize}
-              letterSpacing={2}
-              className={btnClassName}
-              padding={2}
-              marginX={2}
-              as="a"
-              href="#jobs"
-              rel="noreferrer"
-              onClick={onMenuItemClick}
-            >
-              Expériences
-            </Button>
-          </Box>
-          <Box
-            width={{ base: '100%', lg: 'auto' }}
-            textAlign={{ base: 'center', lg: 'left' }}
-            marginY={{ base: 2, lg: 0 }}
-          >
-            <Button
-              fontWeight="light"
-              variant="ghost"
-              fontSize={menuButtonSize}
-              letterSpacing={2}
-              className={btnClassName}
-              padding={2}
-              marginX={2}
-              as="a"
-              href="#works"
-              rel="noreferrer"
-              onClick={onMenuItemClick}
-            >
-              Réalisations
-            </Button>
-          </Box>
-          <Box
-            width={{ base: '100%', lg: 'auto' }}
-            textAlign={{ base: 'center', lg: 'left' }}
-            marginY={{ base: 2, lg: 0 }}
-          >
-            <Button
-              fontWeight="light"
-              variant="ghost"
-              fontSize={menuButtonSize}
-              letterSpacing={2}
-              className={btnClassName}
-              padding={2}
-              marginX={2}
-              as="a"
-              href="#contact"
-              rel="noreferrer"
-              onClick={onMenuItemClick}
-            >
-              Contact
-            </Button>
-          </Box>
+              <Link
+                href={isMobile ? item.href : item.desktopHref ?? item.href}
+                rel="noreferrer"
+                onClick={onMenuItemClick}
+                display="inline-block"
+                textStyle="label"
+                textDecoration="none"
+                color="text.secondary"
+                padding={2}
+                marginX={2}
+                className={styles.blogBtn}
+                _focusVisible={{ boxShadow: 'none', color: 'accent.default' }}
+              >
+                {item.label}
+              </Link>
+            </Box>
+          ))}
           {!isMobile && (
             <Box>
               <IconButton

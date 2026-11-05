@@ -1,15 +1,20 @@
 /* eslint-disable react/no-multi-comp */
 import * as React from 'react'
-import { motion } from 'framer-motion'
+import { motion, SVGMotionProps } from 'framer-motion'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Path = (props: any) => (
+type PathProps = SVGMotionProps<SVGPathElement> & { isDarkMode?: boolean }
+
+// `isDarkMode` ne doit jamais atterrir sur l'élément DOM `motion.path` (React
+// lève un warning "does not recognize the 'isDarkMode' prop" sinon) — on le
+// consomme ici pour calculer `stroke`, puis on ne propage que le reste
+// (`pathProps`), qui correspond bien à de vrais attributs SVG/motion.
+const Path = ({ isDarkMode, ...pathProps }: PathProps) => (
   <motion.path
     fill="transparent"
     strokeWidth="3"
-    stroke={props?.isDarkMode ? 'hsl(240, 100%, 94%)' : 'hsl(0, 0%, 7%)'}
+    stroke={isDarkMode ? 'hsl(240, 100%, 94%)' : 'hsl(0, 0%, 7%)'}
     strokeLinecap="round"
-    {...props}
+    {...pathProps}
   />
 )
 

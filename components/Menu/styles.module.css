@@ -17,11 +17,10 @@
 }
 
 .blogBtn{
-  color: inherit;
   text-decoration: underline 0.15em rgba(255, 255, 255, 0);
   border-bottom: 1px solid transparent;
   border-right: 1px solid transparent;
-  transition: text-decoration-color 300ms !important;
+  transition: text-decoration-color 300ms, color 300ms !important;
   background-color: transparent !important;
   box-shadow: none !important;
 }
@@ -29,12 +28,7 @@
 .blogBtn:hover,
 .blogBtn:focus,
 .blogBtn:active {
-  text-decoration-color: #97DFFC;
+  text-decoration-color: var(--chakra-colors-accent-default);
+  color: var(--chakra-colors-accent-default);
   background-color: transparent;
-}
-
-.blogBtn.dark:hover,
-.blogBtn.dark:focus,
-.blogBtn.dark:active {
-  text-decoration-color: #121212;
 }
