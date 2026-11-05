@@ -287,16 +287,16 @@ Critères d'acceptation :
 
 ## US-019 — Contact : scène de clôture avec forme 3D ambiante
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé (en attente de build/revue finale)
 
 Objectif : scène finale avec une forme filaire 3D minimaliste (React Three Fiber), rappel de l'effet scramble du Hero sur l'email, copie en un clic.
 
 Critères d'acceptation :
-- [ ] `@react-three/fiber@^8.18.0` + `@react-three/drei@^9.122.0` + `three@^0.187.0` (versions exactes validées par le developer — jamais un install nu qui résoudrait sur une version React 19-only incompatible).
-- [ ] Chargement `next/dynamic(ssr:false)`, montage uniquement quand Contact entre dans le viewport (réutilise le pattern `useInView` déjà présent dans `GetInTouch`) — zéro coût sur le chargement initial du site.
-- [ ] Forme 3D : rotation autonome lente, réagit légèrement à la souris en offset additif (desktop), rotation autonome seule sur mobile (pas de demande de permission gyroscope).
-- [ ] Email réel et lien GitHub réel conservés et fonctionnels (`mailto:` existant intact) ; clic sur l'email copie dans le presse-papiers en plus, avec confirmation visuelle.
-- [ ] `prefers-reduced-motion` : le canvas 3D n'est **pas monté du tout** (ni chargé ni rendu statique), remplacé par un fond décoratif plat ; scramble de l'email devient un fondu simple.
+- [x] `@react-three/fiber@^8.18.0` + `@react-three/drei@^9.122.0` + `three@^0.187.0` (versions exactes validées par le developer — jamais un install nu qui résoudrait sur une version React 19-only incompatible). Vérifié via `npm ls` : tout dédupliqué sur ces versions exactes, `react@18.3.1`, aucun conflit de peerDependencies.
+- [x] Chargement `next/dynamic(ssr:false)`, montage uniquement quand Contact entre dans le viewport (réutilise le pattern `useInView` déjà présent dans `GetInTouch`) — zéro coût sur le chargement initial du site. Vérifié par script Playwright : 0 `<canvas>` et 0 requête réseau pour le chunk `ContactScene` avant le scroll vers Contact, 1 et 1 après.
+- [x] Forme 3D : rotation autonome lente, réagit légèrement à la souris en offset additif (desktop), rotation autonome seule sur mobile (pas de demande de permission gyroscope). Vérifié par lecture directe de `mesh.rotation`/`state.mouse` (instrumentation temporaire, testée puis retirée) : rotation continue sans souris, delta ×5 avec la souris tenue sur un bord du canvas. Mobile : canvas rendu, aucun appel à `DeviceOrientationEvent.requestPermission` (le mécanisme n'en utilise d'ailleurs aucun, mouse/pointer uniquement).
+- [x] Email réel et lien GitHub réel conservés et fonctionnels (`mailto:` existant intact) ; clic sur l'email copie dans le presse-papiers en plus, avec confirmation visuelle. Vérifié : `mailto:` et lien GitHub inchangés, clic sur le nouvel affichage email copie le texte exact (`navigator.clipboard`, via `useClipboard` de Chakra) et affiche "Copié !".
+- [x] `prefers-reduced-motion` : le canvas 3D n'est **pas monté du tout** (ni chargé ni rendu statique), remplacé par un fond décoratif plat ; scramble de l'email devient un fondu simple. Vérifié : 0 `<canvas>`, 0 requête `ContactScene` même après scroll, email affiché immédiatement sans scramble.
 
 ## US-020 — Curseur personnalisé et micro-interactions desktop
 **Priorité :** Basse

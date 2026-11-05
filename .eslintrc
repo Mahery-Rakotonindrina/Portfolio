@@ -23,6 +23,7 @@
     "no-useless-escape": "error",
     "no-trailing-spaces": "error",
     "react/no-multi-comp": "error",
+    "react/no-unknown-property": ["error", { "ignore": ["wireframe"] }],
     "import/first": "error",
     "import/order": "error",
     "linebreak-style": 0,
