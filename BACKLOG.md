@@ -225,16 +225,18 @@ Détails dans `.claude/memory/developer.md`. `npm run build` non exécuté (serv
 
 ## US-015 — About : révélation scrubbed par balayage
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : remplacer le `scrollReveal` générique du texte de présentation par une révélation pilotée par la position de scroll (`clip-path`), avec un teaser orbital sur le CTA compétences.
 
 Critères d'acceptation :
-- [ ] Desktop : verrouillage bref (`position: sticky`, pas de GSAP nécessaire) pendant lequel chaque bloc de texte réel se révèle par balayage `clip-path` à un seuil de progression distinct.
-- [ ] Teaser au survol du CTA "Mon attirail de développeur" : libellés des 9 catégories réelles de `config/skills.ts` qui orbitent légèrement près du curseur (aucune métrique, juste les noms).
-- [ ] Mobile/tablette : même effet visuel de balayage mais déclenché à l'entrée dans le viewport (pas de verrouillage de scroll), pas de teaser orbital (pas de survol tactile).
-- [ ] `prefers-reduced-motion` : fondu d'opacité simple, pas de verrouillage de scroll, pas de teaser orbital.
-- [ ] Texte de présentation réel conservé intégralement (aucune réécriture de contenu).
+- [x] Desktop : verrouillage bref (`position: sticky`, pas de GSAP nécessaire) pendant lequel chaque bloc de texte réel se révèle par balayage `clip-path` à un seuil de progression distinct.
+- [x] Teaser au survol du CTA "Mon attirail de développeur" : libellés des 9 catégories réelles de `config/skills.ts` qui orbitent légèrement près du curseur (aucune métrique, juste les noms).
+- [x] Mobile/tablette : même effet visuel de balayage mais déclenché à l'entrée dans le viewport (pas de verrouillage de scroll), pas de teaser orbital (pas de survol tactile).
+- [x] `prefers-reduced-motion` : fondu d'opacité simple, pas de verrouillage de scroll, pas de teaser orbital.
+- [x] Texte de présentation réel conservé intégralement (aucune réécriture de contenu).
+
+Détails, pièges (3 bugs trouvés et corrigés en vérification) et point de layout à faire valider par le designer/PO dans `.claude/memory/developer.md`. `npm run build` non exécuté (serveur dev déjà actif sur le port 3000) — lint/typecheck passent, reste à faire par le PO avant validation finale.
 
 ## US-016 — Skills : overlay plein écran en carte de relations
 **Priorité :** Moyenne

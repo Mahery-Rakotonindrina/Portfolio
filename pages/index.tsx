@@ -77,7 +77,17 @@ const Portfolio = (): JSX.Element => {
           padding={mainContent}
           rowSpan={2}
           colSpan={{ base: 1, sm: 2, md: 2, lg: 3, xl: 3 }}
-          overflow="hidden"
+          // US-015 : `overflow: hidden` sur CET ancêtre désactive totalement
+          // `position: sticky` pour tout descendant (CSS en fait le
+          // "conteneur de scroll" de référence, qui ne défile jamais
+          // lui-même puisque c'est `window` qui scrolle, pas lui — le
+          // verrouillage sticky de Detail.tsx ne collait donc jamais,
+          // confirmé par mesure réelle). Limité à `xl` (seul breakpoint où
+          // le verrouillage s'active) ; `base`/withdrawn breakpoints
+          // gardent la protection anti-débordement horizontal d'origine.
+          // Vérifié sans régression de largeur (scrollWidth === clientWidth)
+          // à 375/768/1440px après ce changement.
+          overflow={{ base: 'hidden', xl: 'visible' }}
         >
           <Stack w="100" spacing={24}>
             <FadeInLayout>
@@ -86,7 +96,14 @@ const Portfolio = (): JSX.Element => {
                 className="contentRow"
                 minH={{ lg: '100vh' }}
                 display="flex"
-                alignItems="center"
+                // US-015 : au verrouillage scrubbed de Detail.tsx (desktop,
+                // hors reduced-motion), la colonne About devient très haute
+                // (sticky-lock ~250vh) ; `flex-start` évite que l'Avatar
+                // (sibling plus court) se retrouve centré au milieu de cette
+                // hauteur verrouillée (quasi hors-écran pendant le lock) —
+                // décision technique à valider par le designer/PO si le
+                // rendu ne convient pas.
+                alignItems={{ base: 'center', xl: 'flex-start' }}
                 paddingTop={{ base: 0, lg: 20, xl: 0 }}
                 paddingBottom={{ base: 12, lg: 0 }}
                 flexDirection={{
