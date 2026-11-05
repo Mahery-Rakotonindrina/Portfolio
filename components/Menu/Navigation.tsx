@@ -6,7 +6,6 @@ import {
   Box,
   IconButton,
   useColorMode,
-  useColorModeValue,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
@@ -82,11 +81,6 @@ const Navigation = () => {
     setShouldReduceMotion(Boolean(prefersReducedMotion))
   }, [prefersReducedMotion])
 
-  const bg = useColorModeValue(
-    'rgba(237, 242, 247, 0.95)',
-    'rgba(11, 13, 18, 0.9)'
-  )
-
   const IsDark = colorMode === ThemeMode.Dark
   const Icon = IsDark ? SunIcon : MoonIcon
   const onMenuItemClick = useCallback(
@@ -123,7 +117,18 @@ const Navigation = () => {
 
       <MotionContainer
         width="100%"
-        backgroundColor={bg}
+        // US-009 (bug trouvé par le tester) : un fond translucide
+        // (`rgba(..., 0.9)`/`rgba(..., 0.95)`) laissait le contenu de la
+        // Sidebar visible en transparence derrière le menu mobile/tablette
+        // ouvert, superposé aux 4 liens de navigation. Vérifié pixel par
+        // pixel (lecture `getImageData` sur la capture réelle, pas juste à
+        // l'œil) : même à 0.98-0.99 d'opacité, un résidu de quelques unités
+        // RGB restait mesurable ET visible sur une capture agrandie — seul
+        // un fond totalement opaque élimine la fuite. `bg.canvas` (jeton
+        // sémantique déjà utilisé par le reste du site, `config/theme.ts`)
+        // est exactement la couleur qui était précédemment codée en dur en
+        // rgba ici, sans le canal alpha devenu inutile.
+        backgroundColor="bg.canvas"
         maxWidth={{ base: '100%', sm: '100%', lg: '50%', xl: '60%' }}
         className={styles.menu}
         right={{

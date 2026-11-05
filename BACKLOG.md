@@ -138,14 +138,16 @@ Vérifié par script Playwright local (`mcp__playwright__*` non chargé dans cet
 
 ## US-009 — Responsive complet
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : vérifier et adapter chaque section à mobile (~375px), tablette (~768px) et desktop (~1280px+).
 
 Critères d'acceptation :
-- [ ] Aucun débordement horizontal.
-- [ ] Textes lisibles sur mobile.
-- [ ] Interactions tactiles correctes.
+- [x] Aucun débordement horizontal. Vérifié par le testeur (`scrollWidth === clientWidth`) sur les 3 largeurs × 2 thèmes, pour toutes les sections, y compris menu mobile ouvert et modal de compétences ouvert.
+- [x] Textes lisibles sur mobile. Vérifié à 375px et 768px pour toutes les sections (la tablette, non détaillée avant cette US sauf pour la Sidebar, a été vérifiée section par section). **Bug trouvé et corrigé** : le fond du menu mobile/tablette ouvert (`rgba(...)` translucide posé en US-008) laissait transparaître le texte de la Sidebar en arrière-plan, superposé aux liens de nav — remplacé par le jeton opaque `bg.canvas` dans `components/Menu/Navigation.tsx`. Re-vérifié par le PO : plus de chevauchement, aucune régression du fix d'hydratation `prefers-reduced-motion` ni du rendu desktop (pill de nav au scroll).
+- [x] Interactions tactiles correctes. Vérifié par le testeur : menu mobile (ouverture/fermeture/clic sur lien) fonctionnel à 375px et 768px, modal de compétences accessible et sans débordement aux deux largeurs.
+
+Recoupement QA (US-010) effectué dans la même passe : lint/typecheck, ancres, toggle dark/light, modal (9 catégories), lien "Voir le projet" (E-Kaly uniquement), pas de nouvelle erreur console. Tentative de reproduction du bug non-reproductible noté en US-006 (`FeaturedCard`, resize rapide) — toujours non reproduit. Détails dans `.claude/memory/tester.md` et `.claude/memory/developer.md`. Captures `screenshots/us009-*.png`.
 
 ## US-010 — QA et optimisation
 **Priorité :** Haute
