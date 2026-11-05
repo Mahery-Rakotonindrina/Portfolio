@@ -269,17 +269,21 @@ Détail du mécanisme, piège d'indentation ESLint rencontré, et méthode de v�
 
 ## US-018 — Projects : galerie horizontale pilotée par le scroll (GSAP)
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Développement terminé, reste build complet + revue PO/testeur
 
 Objectif : remplacer la grille statique 2×2 (US-006) par une galerie en défilement horizontal piloté par le scroll vertical (pin + scrub GSAP ScrollTrigger), avec vue de détail en morph et fallback statique en `prefers-reduced-motion`.
 
 Critères d'acceptation :
-- [ ] `@react-three/fiber`/GSAP installés avec les versions validées par le developer ; pin GSAP ScrollTrigger desktop, `ScrollTrigger.matchMedia` pour le switch desktop/mobile testé réellement au resize (pas seulement au chargement).
-- [ ] Les 4 projets réels (Becquet!, GIPROD Androy, E-Kaly, GESCOM) et leurs vraies données conservés intégralement ; le lien "voir le projet" ne s'affiche que pour une vraie URL externe valide (logique `isExternalProjectLink` d'US-006 conservée à l'identique — seule E-Kaly doit l'afficher).
-- [ ] Survol (desktop) : scale image + overlay révélant index/titre/lien conditionnel. Clic : morph `layoutId` vers une vue de détail avec le texte complet réel (aucun mot inventé).
-- [ ] Mobile/tactile : pas de scroll-jacking — swipe horizontal natif (`scroll-snap`), `data-lenis-prevent` posé sur le conteneur pour ne pas perturber le swipe natif (point remonté par le developer en faisabilité).
-- [ ] `prefers-reduced-motion` : pin + scroll-jacking entièrement désactivés, retour à la grille statique 2×2 existante (US-006) comme filet de sécurité — contenu identique, mécanique différente seulement.
-- [ ] Le composant Projects (markup/texte réel) ne doit jamais être rendu `ssr:false` dans son ensemble (seule la logique GSAP est client-only) — pas de régression SEO par rapport à US-006.
+- [x] GSAP (déjà installé depuis US-012, `^3.15.1`, ScrollTrigger inclus) utilisé pour le pin GSAP ScrollTrigger desktop ; `gsap.matchMedia()`/`ScrollTrigger.matchMedia` (même API, utilisée ici via `gsap.matchMedia()` pour un typage TS propre — détail dans `.claude/memory/developer.md`) pour le switch desktop/mobile, testé réellement au resize réel de fenêtre dans les deux sens (pas seulement au chargement initial). Aucune nouvelle dépendance ajoutée (pas de `@react-three/fiber` ici, hors scope de cette US — réservé à US-019).
+- [x] Les 4 projets réels (Becquet!, GIPROD Androy, E-Kaly, GESCOM) et leurs vraies données (`config/works.ts`, non modifié) conservés intégralement ; le lien "voir le projet" ne s'affiche que pour une vraie URL externe valide (fonction `isExternalProjectLink` d'US-006 réutilisée à l'identique, désormais exportée — vérifié dans 3 contextes : carte galerie, grille reduced-motion, vue de détail — seule E-Kaly l'affiche dans les trois).
+- [x] Survol (desktop) : scale de l'image (`_groupHover`, confirmé `scale(1.06)` via `getComputedStyle` réel) + overlay révélant index/titre (décoratifs) et lien conditionnel (réel). Clic : morph via `layoutId` (Framer Motion) vers une vue de détail (`ProjectDetailModal`) avec le texte complet réel (identique à `config/works.ts`, aucun mot inventé) — vérifié par lecture du DOM de la modal après clic réel.
+- [x] Mobile/tactile : pas de scroll-jacking — swipe horizontal natif (`scroll-snap` CSS, actif par défaut sans JS), `data-lenis-prevent` posé sur le conteneur. Vérifié : `scrollLeft` du conteneur avance bien au swipe (0→340), et le scroll vertical de la page n'est pas bloqué juste après (testé en partant d'une position avec de la marge de scroll restante, pas juste en bas de page).
+- [x] `prefers-reduced-motion` : pin + scroll-jacking entièrement désactivés (aucune instance ScrollTrigger créée), retour à la grille statique 2×2 existante (US-006) via CSS pur (`@media (prefers-reduced-motion: reduce)`, aucune dépendance React/hydratation) — même contenu, mécanique différente. Vérifié : scroll vertical normal confirmé non bloqué (`scrollY` avance proportionnellement au wheel), aucun pin.
+- [x] Le composant Projects (markup/texte réel) n'est jamais rendu `ssr:false` dans son ensemble — seule la logique GSAP est client-only (`useEffect`). Vérifié par `curl` sur le HTML SSR : les 4 titres réels présents dans le HTML généré côté serveur.
+
+**Bug GSAP trouvé et corrigé en vérification (pas un simple détail cosmétique)** : `pinSpacing` est silencieusement désactivé par défaut par GSAP quand le parent direct de l'élément pinné est `display: flex` (notre cas — `Stack` Chakra) ; sans le forcer explicitement (`pinSpacing: 'padding'`), le pin s'engageait visuellement (`position: fixed` confirmé) mais sans jamais réserver l'espace de scroll nécessaire, donc la section Contact remontait et chevauchait la galerie avant la fin du défilement horizontal prévu. Détail complet, cause racine (trouvée en lisant le code source GSAP) et méthode de vérification avant/après dans `.claude/memory/developer.md`.
+
+`npm run lint` et `npx tsc --noEmit` passent. `npm run build` non exécuté (serveur dev déjà actif sur le port 3000, convention établie depuis US-013) — à faire par le PO avant validation finale. Captures : `screenshots/us018-gallery-desktop-dark-pinned-mid.png`, `-gallery-card-hover.png`, `-detail-morph-desktop-dark.png`, `-gallery-mobile-dark-swipe.png`, `-gallery-resized-to-mobile.png`, `-gallery-desktop-dark-reduced-motion-grid.png`.
 
 ## US-019 — Contact : scène de clôture avec forme 3D ambiante
 **Priorité :** Moyenne

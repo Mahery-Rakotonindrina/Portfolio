@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import {
   AspectRatio,
+  Box,
   Icon,
   Image,
   Link,
@@ -16,11 +17,16 @@ import {
   scrollRevealReduced,
   hoverLift,
   hoverLiftReduced,
+  DURATIONS,
 } from 'config/animations'
 
 export type FeaturedCardProps = {
   work: Work
   idx: number
+  // US-018 : ouvre la vue de détail en morph (ProjectDetailModal, piloté par
+  // ProjectGallery). `imageLayoutId` est partagé entre la vignette ici et
+  // l'image de la modal pour le FLIP Framer Motion.
+  onOpenDetail: (work: Work, imageLayoutId: string) => void
 }
 
 const IMAGE_EXTENSION_PATTERN = /\.(jpe?g|png|gif|webp|svg|avif)(\?.*)?$/i
@@ -31,7 +37,10 @@ const IMAGE_EXTENSION_PATTERN = /\.(jpe?g|png|gif|webp|svg|avif)(\?.*)?$/i
 // Becquet! et GESCOM affichaient un lien vers leur propre capture d'écran
 // plutôt qu'un vrai site, et empêche un chemin local mal orthographié (ex.
 // GIPROD Androy, "/giprod.jp") d'être pris pour un lien valide.
-const isExternalProjectLink = (
+// Exportée (US-018) : ProjectGallery/ProjectDetailModal réutilisent la même
+// logique à l'identique pour décider d'afficher le lien dans la vue de détail
+// en morph — aucune divergence possible entre la carte et le détail.
+export const isExternalProjectLink = (
   ctaUrl: string | undefined,
   src: string
 ): boolean => {
@@ -55,6 +64,7 @@ const isExternalProjectLink = (
 }
 
 const MotionStack = motion(Stack)
+const MotionImage = motion(Image)
 
 // Carte de la galerie "best-of" : révélation individuelle au scroll
 // (scrollReveal, même mécanique que chaque entrée de la timeline Experience,
@@ -62,7 +72,16 @@ const MotionStack = motion(Stack)
 // déjà utilisée ailleurs sur les cartes interactives) combinée à une ombre
 // qui se creuse et une bordure qui s'accentue, pour un signal de profondeur
 // sobre plutôt qu'un effet tape-à-l'œil (zoom/parallaxe marqué).
-const FeaturedCard = ({ work, idx }: FeaturedCardProps) => {
+// US-018 : `role="group"` sur la carte pilote (via `_groupHover`, pur CSS —
+// aucun conflit avec le `layoutId`/`whileHover` Framer posés sur l'image, cf.
+// `_hover`+`whileHover` déjà combinés sans problème sur ce même composant
+// depuis US-006) le zoom de l'image + l'overlay (index/titre décoratifs,
+// lien réel conditionnel) au survol desktop. Le bouton transparent plein
+// cadre ouvre la vue de détail en morph (`onOpenDetail`, voir ProjectGallery/
+// ProjectDetailModal) ; le lien externe réel reste un `<a>` distinct, placé
+// après le bouton dans le DOM pour intercepter le clic sur sa propre petite
+// zone sans naviguer vers le détail.
+const FeaturedCard = ({ work, idx, onOpenDetail }: FeaturedCardProps) => {
   const { title, description, src, ctaUrl, objectPosition } = work
   const shouldReduceMotion = useReducedMotion()
 
@@ -73,10 +92,12 @@ const FeaturedCard = ({ work, idx }: FeaturedCardProps) => {
     .hover
 
   const showProjectLink = isExternalProjectLink(ctaUrl, src)
+  const imageLayoutId = `project-image-${idx}`
 
   return (
     <MotionStack
       as="article"
+      role="group"
       spacing={0}
       bg="bg.surface"
       borderWidth="1px"
@@ -92,16 +113,95 @@ const FeaturedCard = ({ work, idx }: FeaturedCardProps) => {
       _hover={{ boxShadow: 'lg', borderColor: 'accent.default' }}
       sx={{ transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}
     >
-      <AspectRatio ratio={16 / 10}>
-        <Image
-          src={src}
-          alt={title}
-          objectFit="cover"
-          objectPosition={objectPosition}
-          loading="lazy"
-          fallback={<Skeleton height="100%" width="100%" />}
+      <Box position="relative" overflow="hidden">
+        <AspectRatio ratio={16 / 10}>
+          <MotionImage
+            src={src}
+            alt={title}
+            objectFit="cover"
+            objectPosition={objectPosition}
+            loading="lazy"
+            fallback={<Skeleton height="100%" width="100%" />}
+            // Partagé avec l'image de ProjectDetailModal : Framer Motion
+            // anime le FLIP entre les deux au clic. Désactivé sous
+            // prefers-reduced-motion (simple fondu dans la modal à la place).
+            layoutId={shouldReduceMotion ? undefined : imageLayoutId}
+            _groupHover={{ transform: 'scale(1.06)' }}
+            sx={{ transition: `transform ${DURATIONS.VeryFast}s ease` }}
+          />
+        </AspectRatio>
+
+        {/* Overlay de survol (desktop) : index + titre dupliqués à des fins
+            purement décoratives (le vrai texte existe déjà ci-dessous, donc
+            `aria-hidden` pour ne pas le faire annoncer deux fois) + lien
+            réel conditionnel. */}
+        <Box
+          position="absolute"
+          inset={0}
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-end"
+          p={4}
+          opacity={0}
+          pointerEvents="none"
+          aria-hidden="true"
+          _groupHover={{ opacity: 1 }}
+          sx={{
+            transition: `opacity ${DURATIONS.VeryFast}s ease`,
+            background:
+              'linear-gradient(to top, rgba(11,13,18,0.85), rgba(11,13,18,0) 65%)',
+          }}
+        >
+          <Text as="span" textStyle="label" color="accent.default">
+            #0{idx}
+          </Text>
+          <Text as="span" textStyle="subtitle" color="white">
+            {title}
+          </Text>
+        </Box>
+
+        <Box
+          as="button"
+          type="button"
+          aria-label={`Voir le détail du projet ${title}`}
+          onClick={() => onOpenDetail(work, imageLayoutId)}
+          position="absolute"
+          inset={0}
+          width="100%"
+          height="100%"
+          bg="transparent"
+          border="none"
+          p={0}
+          cursor="pointer"
+          _focusVisible={{ boxShadow: 'outline' }}
         />
-      </AspectRatio>
+
+        {showProjectLink && (
+          <Link
+            href={ctaUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-hidden="true"
+            tabIndex={-1}
+            position="absolute"
+            bottom={4}
+            right={4}
+            zIndex={1}
+            fontSize="sm"
+            display="inline-flex"
+            alignItems="center"
+            gap={1}
+            color="white"
+            opacity={0}
+            pointerEvents="none"
+            _groupHover={{ opacity: 1, pointerEvents: 'auto' }}
+            sx={{ transition: `opacity ${DURATIONS.VeryFast}s ease` }}
+          >
+            Voir le projet
+            <Icon as={BiLinkExternal} />
+          </Link>
+        )}
+      </Box>
 
       <Stack spacing={3} p={{ base: 4, md: 6 }} flex="1">
         <Text as="h3" textStyle="subtitle">

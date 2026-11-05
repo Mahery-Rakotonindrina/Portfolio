@@ -1,0 +1,63 @@
+/* US-018 — galerie horizontale pilotée par le scroll.
+ * Base (sans JS, tout breakpoint) : rangée flex avec scroll-snap natif —
+ * c'est littéralement l'expérience mobile/tactile finale (swipe natif, pas
+ * de scroll-jacking) et aussi la mise en page de secours avant que l'effet
+ * GSAP (ProjectGallery.tsx, client-only) ne monte sur desktop. Le pin+scrub
+ * GSAP ne fait que surcharger `overflow`/`transform` en inline (JS) une fois
+ * monté sur desktop — rien ici ne dépend du JS pour fonctionner.
+ */
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.25rem 0.25rem 1.5rem;
+}
+
+.track > * {
+  flex: 0 0 min(85vw, 380px);
+  scroll-snap-align: center;
+}
+
+/* Cosmétique uniquement (tailles de carte plus confortables sur grand
+ * écran) — indépendant du seuil exact utilisé par ScrollTrigger.matchMedia
+ * (ProjectGallery.tsx, aligné sur le breakpoint `xl`/80em du reste du site).
+ */
+@media (min-width: 62em) {
+  .track > * {
+    flex: 0 0 min(60vw, 560px);
+  }
+}
+
+/* Filet de sécurité prefers-reduced-motion (critère d'acceptation US-018) :
+ * retour intégral à la grille statique 2x2 d'US-006, même structure DOM,
+ * seulement la présentation visuelle change — aucune dépendance JS/React,
+ * s'applique dès le tout premier paint, aucun risque de mismatch
+ * d'hydratation. Mêmes seuils que l'ancienne SimpleGrid (`base: 1, md: 2`).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding: 0;
+  }
+
+  .track > * {
+    flex: initial;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 48em) {
+  .track {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
