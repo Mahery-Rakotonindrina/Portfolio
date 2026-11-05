@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { categoryLabels } from './skillCategoryLabels'
+import RelationNode from './RelationNode'
 import SkillChips from './SkillChips'
 import { DURATIONS } from 'config/animations'
 import { SkillCategory, Skills } from 'config/skills'
@@ -158,44 +159,20 @@ const RelationDiagram = ({
           const { x, y } = nodePosition(index)
           const active = isExpanded(category)
           return (
-            <Box
+            <RelationNode
               key={category}
-              as="button"
-              type="button"
-              position="absolute"
-              left={`${x}px`}
-              top={`${y}px`}
-              transform="translate(-50%, -50%)"
-              whiteSpace="nowrap"
-              px={3}
-              py={1.5}
-              bg="bg.surface"
-              borderWidth="1px"
-              borderColor={active ? 'accent.default' : 'border.subtle'}
-              borderRadius={0}
-              cursor="pointer"
-              aria-expanded={active}
-              aria-controls={panelIdFor(category)}
-              onMouseEnter={() => onHoverStart(category)}
-              onMouseLeave={onHoverEnd}
+              category={category}
+              x={x}
+              y={y}
+              active={active}
+              fontSize={NODE_FONT_SIZE_PX}
+              panelId={panelIdFor(category)}
+              onHoverStart={() => onHoverStart(category)}
+              onHoverEnd={onHoverEnd}
               onFocus={() => onFocusCategory(category)}
               onBlur={onBlurCategory}
               onClick={() => onTogglePin(category)}
-              _focusVisible={{
-                boxShadow: '0 0 0 2px',
-                borderColor: 'accent.default',
-              }}
-              sx={{ transition: 'border-color 0.2s ease' }}
-            >
-              <Text
-                as="span"
-                textStyle="label"
-                fontSize={`${NODE_FONT_SIZE_PX}px`}
-                color={active ? 'accent.default' : 'text.secondary'}
-              >
-                {categoryLabels[category]}
-              </Text>
-            </Box>
+            />
           )
         })}
       </Box>

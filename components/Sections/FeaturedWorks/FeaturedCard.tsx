@@ -112,6 +112,11 @@ const FeaturedCard = ({ work, idx, onOpenDetail }: FeaturedCardProps) => {
       whileHover={hoverLiftTarget}
       _hover={{ boxShadow: 'lg', borderColor: 'accent.default' }}
       sx={{ transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}
+      // US-020 : consommé par CustomCursor (closest('[data-cursor-label]'))
+      // pour afficher le label "VOIR" au survol — uniquement posé si cette
+      // carte a un vrai lien externe (showProjectLink, cf. isExternalProjectLink
+      // ci-dessus), jamais sur les 3 cartes sans lien réel.
+      data-cursor-label={showProjectLink ? 'voir' : undefined}
     >
       <Box position="relative" overflow="hidden">
         <AspectRatio ratio={16 / 10}>

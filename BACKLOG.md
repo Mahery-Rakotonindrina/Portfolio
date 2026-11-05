@@ -300,16 +300,16 @@ Critères d'acceptation :
 
 ## US-020 — Curseur personnalisé et micro-interactions desktop
 **Priorité :** Basse
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : curseur personnalisé contextuel (desktop uniquement, `@media (hover: hover) and (pointer: fine)`) avec effet magnétique ciblé sur 3 familles d'éléments précises.
 
 Critères d'acceptation :
-- [ ] Anneau qui suit le pointeur avec ressort (`useSpring`), états contextuels précis (grossit sur lien/bouton générique, label "VOIR" sur une carte Projects avec vrai lien uniquement, "+" sur un nœud Skills).
-- [ ] Effet magnétique limité à 3 familles de cibles (icônes sociales Hero, nœuds Skills, repères de la jauge HUD) — pas généralisé à tout élément cliquable.
-- [ ] Mobile/tactile : curseur personnalisé entièrement absent ; les affordances qu'il portait ("VOIR", "+") deviennent des badges statiques toujours visibles.
-- [ ] `prefers-reduced-motion` : curseur personnalisé entièrement désactivé (retour au curseur système), affordances en badges statiques (même traitement que mobile).
-- [ ] Ne masque jamais l'indicateur de focus clavier natif (acquis d'accessibilité US-010 préservé).
+- [x] Anneau qui suit le pointeur avec ressort (`useSpring`), états contextuels précis (grossit sur lien/bouton générique, label "VOIR" sur une carte Projects avec vrai lien uniquement, "+" sur un nœud Skills). Vérifié : position avec inertie confirmée par échantillonnage après un grand saut de souris (rattrapage progressif sur plusieurs frames, pas un saut instantané) ; anneau 24px→40px au survol des 4 cartes Projects (grow sans label pour Becquet/GIPROD/GESCOM, label "VOIR" uniquement pour E-Kaly, seule carte avec `isExternalProjectLink` vrai) ; "+" confirmé sur les 9 nœuds du diagramme Skills.
+- [x] Effet magnétique limité à 3 familles de cibles (icônes sociales Hero, nœuds Skills, repères de la jauge HUD) — pas généralisé à tout élément cliquable. Vérifié par lecture de `getComputedStyle().transform` avant/après approche réelle : translation non nulle et proportionnelle à la distance sur les 3 familles (icônes sociales, nœuds Skills, repères HUD), `transform: none` constant (aucune translation) sur un lien de nav générique et sur une carte Projects à la même distance d'approche.
+- [x] Mobile/tactile : curseur personnalisé entièrement absent ; les affordances qu'il portait ("VOIR", "+") deviennent des badges statiques toujours visibles. Vérifié dans un contexte Playwright tactile dédié (`hasTouch`/`isMobile`) : aucun DOM de curseur avant/après un tap, `document.body.style.cursor` jamais forcé — badge "Voir le projet" déjà statique et toujours visible (US-018, inchangé) ; cas tactile à largeur desktop (tablette, diagramme Skills radial quand même rendu) confirmé séparément : 9/9 nœuds avec badge "+" statique visible.
+- [x] `prefers-reduced-motion` : curseur personnalisé entièrement désactivé (retour au curseur système), affordances en badges statiques (même traitement que mobile). Vérifié dans un contexte créé avec `reducedMotion: 'reduce'` dès `newContext` (pas après coup) : curseur jamais apparu malgré de vrais déplacements de souris, `body.style.cursor` jamais modifié, 9/9 badges "+" statiques sur les nœuds Skills.
+- [x] Ne masque jamais l'indicateur de focus clavier natif (acquis d'accessibilité US-010 préservé). Vérifié par un vrai `Tab` clavier (pas de `.focus()` programmatique) après un survol souris réel : l'anneau disparaît dès le premier `Tab` et reste absent sur les `Tab` suivants (y compris sur un repère HUD magnétique avec son propre `_focusVisible`), l'indicateur de focus natif (`outline`/`boxShadow`) reste visible et intact ; l'anneau réapparaît dès qu'un vrai mouvement de souris suit.
 
 ## US-021 — QA et accessibilité Phase 2
 **Priorité :** Haute

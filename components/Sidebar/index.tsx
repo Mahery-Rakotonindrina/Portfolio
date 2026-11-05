@@ -5,15 +5,14 @@ import {
   Button,
   useColorMode,
   Container,
-  Link,
   Box,
-  Icon,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { motion, useReducedMotion, Variants } from 'framer-motion'
 import styles from './styles.module.css'
 import BootLog from './BootLog'
 import PerspectiveGrid from './PerspectiveGrid'
+import SocialIcon from './SocialIcon'
 import {
   heroBoot,
   heroBootReduced,
@@ -57,7 +56,6 @@ const MotionText = motion(Text)
 const MotionStack = motion(Stack)
 const MotionButton = motion(Button)
 const MotionBox = motion(Box)
-const MotionLink = motion(Link)
 
 const Sidebar = () => {
   const { colorMode } = useColorMode()
@@ -224,19 +222,11 @@ const Sidebar = () => {
 
           <MotionBox display="flex" gap={4} variants={itemVariants}>
             {SocialMedias.map((socMedia) => (
-              <MotionLink
-                variant="description"
+              <SocialIcon
                 key={socMedia.label}
-                aria-label={socMedia.label}
-                rel="noreferrer"
-                width={8}
-                href={socMedia.href}
-                target="_blank"
-                _focus={{ boxShadow: 'none' }}
-                whileHover={hoverLiftTarget}
-              >
-                <Icon w={6} h={6} as={socMedia.icon} color="currentColor" />
-              </MotionLink>
+                socialMedia={socMedia}
+                hoverLiftTarget={hoverLiftTarget}
+              />
             ))}
           </MotionBox>
         </MotionStack>

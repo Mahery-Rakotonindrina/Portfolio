@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Box, Flex, Link, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, useBreakpointValue } from '@chakra-ui/react'
 import {
   motion,
   useMotionValueEvent,
@@ -7,20 +7,8 @@ import {
   useScroll,
   useSpring,
 } from 'framer-motion'
+import HUDMarker, { Scene } from './HUDMarker'
 import { mobileBreakpointsMap } from 'config/theme'
-import {
-  navIndicatorReducedTransition,
-  navIndicatorTransition,
-} from 'config/animations'
-
-interface Scene {
-  href: string
-  // `null` pour la scène Hero, qui n'a pas d'ancre dédiée dans pages/index.tsx
-  // (contrairement aux 4 autres, déjà en place depuis US-008).
-  anchorId: string | null
-  number: string
-  label: string
-}
 
 // Ancres réelles déjà en place (components/Menu/Navigation.tsx, pages/index.tsx)
 // — aucune nouvelle ancre créée ici. La scène "Hero" réutilise `#mainGrid`
@@ -70,20 +58,6 @@ const CORNER_POSITIONS = [
     borderRightWidth: '1px',
   },
 ]
-
-// Jeton signature US-002 #4 (navIndicator), jamais câblé jusqu'ici (dette
-// documentée US-008/DESIGN_PROPOSAL_V2 §1.3) : pilote ici le "flash"
-// d'activation d'un repère (scale+opacity). Normal : léger dépassement
-// (0 -> 1.4 -> 1), 300ms. Reduced : apparition directe à l'échelle finale,
-// aucune valeur intermédiaire à interpoler.
-const dotVariants = {
-  inactive: { scale: 0, opacity: 0 },
-  active: { scale: [0, 1.4, 1], opacity: [0, 1, 1] },
-}
-const dotVariantsReduced = {
-  inactive: { scale: 0, opacity: 0 },
-  active: { scale: 1, opacity: 1 },
-}
 
 /**
  * US-014 — Fil conducteur HUD : cadre + jauge de progression à travers les 5
@@ -223,47 +197,14 @@ const ProgressHUD = (): JSX.Element => {
             backgroundColor: 'var(--chakra-colors-accent-default)',
           }}
         />
-        {SCENES.map((scene, index) => {
-          const isActive = index === activeIndex
-          return (
-            <Flex key={scene.href} align="center" gap={2} position="relative">
-              <motion.span
-                variants={shouldReduceMotion ? dotVariantsReduced : dotVariants}
-                animate={isActive ? 'active' : 'inactive'}
-                transition={
-                  shouldReduceMotion
-                    ? navIndicatorReducedTransition
-                    : navIndicatorTransition
-                }
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--chakra-colors-accent-default)',
-                  display: 'inline-block',
-                }}
-              />
-              <Link
-                href={scene.href}
-                aria-label={`Aller à la section ${scene.label}`}
-                aria-current={isActive ? 'true' : undefined}
-                fontFamily="mono"
-                fontSize="xs"
-                letterSpacing="widest"
-                color={isActive ? 'accent.default' : 'text.tertiary'}
-                textDecoration="none"
-                sx={{ transition: 'color 0.3s ease' }}
-                _hover={{ color: 'accent.default' }}
-                _focusVisible={{
-                  boxShadow: '0 0 0 2px',
-                  color: 'accent.default',
-                }}
-              >
-                {scene.number}
-              </Link>
-            </Flex>
-          )
-        })}
+        {SCENES.map((scene, index) => (
+          <HUDMarker
+            key={scene.href}
+            scene={scene}
+            isActive={index === activeIndex}
+            shouldReduceMotion={shouldReduceMotion}
+          />
+        ))}
       </Flex>
     </>
   )

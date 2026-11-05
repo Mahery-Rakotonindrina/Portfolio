@@ -7,7 +7,7 @@ import {
   FaFacebook,
 } from 'react-icons/fa'
 
-type SocialMedia = {
+export type SocialMedia = {
   label: string
   href: string
   icon: IconType
