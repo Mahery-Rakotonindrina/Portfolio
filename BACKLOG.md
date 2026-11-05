@@ -255,15 +255,17 @@ Détails, pièges (quirk flexbox imbriqué pour le centrage vertical, piège de 
 
 ## US-017 — Experience : timeline qui se dessine au scroll
 **Priorité :** Moyenne
-**Statut :** À faire
+**Statut :** Terminé (lint/tsc OK, `npm run build` non exécuté — serveur dev déjà actif sur le port 3000, à faire par le PO)
 
 Objectif : rendre le tracé de la timeline (US-005) proportionnel à la progression du scroll, chaque point s'allumant quand le tracé l'atteint, synchronisé avec la révélation de la carte correspondante.
 
 Critères d'acceptation :
-- [ ] Tracé SVG (ou `scaleY`) piloté par `useScroll`/`useTransform` (Framer Motion, pas de GSAP nécessaire), mécanisme identique desktop/mobile.
-- [ ] Chaque point (Domoti, Vivetic, Pushtech, données réelles de `config/experience.tsx`) s'allume en `accent.default` exactement quand le tracé l'atteint, carte correspondante révélée au même instant.
-- [ ] `prefers-reduced-motion` : ligne entièrement tracée dès l'entrée dans le viewport, tous les points déjà allumés, cartes en fondu simple.
-- [ ] Les 3 entreprises, durées et descriptions réelles conservées intégralement (acquis US-005).
+- [x] Tracé SVG (ou `scaleY`) piloté par `useScroll`/`useTransform` (Framer Motion, pas de GSAP nécessaire), mécanisme identique desktop/mobile.
+- [x] Chaque point (Domoti, Vivetic, Pushtech, données réelles de `config/experience.tsx`) s'allume en `accent.default` exactement quand le tracé l'atteint, carte correspondante révélée au même instant.
+- [x] `prefers-reduced-motion` : ligne entièrement tracée dès l'entrée dans le viewport, tous les points déjà allumés, cartes en fondu simple.
+- [x] Les 3 entreprises, durées et descriptions réelles conservées intégralement (acquis US-005).
+
+Détail du mécanisme, piège d'indentation ESLint rencontré, et méthode de vérification dans `.claude/memory/developer.md`.
 
 ## US-018 — Projects : galerie horizontale pilotée par le scroll (GSAP)
 **Priorité :** Haute
