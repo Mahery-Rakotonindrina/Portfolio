@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   Stack,
   Text,
@@ -11,6 +12,8 @@ import {
 } from '@chakra-ui/react'
 import { motion, useReducedMotion, Variants } from 'framer-motion'
 import styles from './styles.module.css'
+import BootLog from './BootLog'
+import PerspectiveGrid from './PerspectiveGrid'
 import {
   heroBoot,
   heroBootReduced,
@@ -19,23 +22,77 @@ import {
   scaleUp,
 } from 'config/animations'
 import { SocialMedias } from 'config/sidebar'
+import useScrambleText from 'hooks/useScrambleText'
+import { getTypewriterDurationMs } from 'hooks/useTypewriterLines'
+
+// Vraies données déjà affichées plus bas dans ce composant — source unique
+// réutilisée par le journal de boot (BOOT_LINES) pour ne jamais dupliquer/
+// désynchroniser un texte inventé (US-013 / DESIGN_PROPOSAL_V2 §2).
+const FIRST_NAME = 'Solofomahery D.'
+const LAST_NAME = 'RAKOTONINDRINA'
+const ROLE = 'Développeur Frontend'
+
+const BOOT_LINES = [
+  '> INITIALISATION DEVELOPER.EXE',
+  `> PROFIL: ${FIRST_NAME} ${LAST_NAME}`,
+  `> RÔLE: ${ROLE}`,
+]
+// Durée totale du journal de boot normal, dérivée des mêmes constantes de
+// cadence que le hook de typewriter (pas de valeur dupliquée) + un court
+// temps de lecture avant de s'effacer.
+const BOOT_HOLD_MS = 150
+const BOOT_TOTAL_MS = getTypewriterDurationMs(BOOT_LINES) + BOOT_HOLD_MS
+// Sous prefers-reduced-motion : bloc affiché brièvement puis effacé, pas de
+// cascade typewriter (DESIGN_PROPOSAL_V2 §2).
+const BOOT_REDUCED_TOTAL_MS = 500
+
+// Définis au niveau module (pas dans le corps du composant) : Sidebar a
+// maintenant son propre état local (bootLogVisible/scrambleActive, US-013).
+// Recréer ces HOC `motion(...)` à chaque rendu changerait leur identité de
+// composant à chaque changement d'état, forçant React à démonter/remonter
+// tout l'arbre (et donc à relancer `delayChildren`/les transitions depuis
+// zéro à chaque fois) — même piège que celui déjà documenté et corrigé sur
+// GetInTouch/Navigation (US-007/US-008).
+const MotionText = motion(Text)
+const MotionStack = motion(Stack)
+const MotionButton = motion(Button)
+const MotionBox = motion(Box)
+const MotionLink = motion(Link)
 
 const Sidebar = () => {
   const { colorMode } = useColorMode()
   const shouldReduceMotion = useReducedMotion()
   const display = useBreakpointValue({ base: 'none', lg: 'block' })
+  // Le panneau Sidebar reste `position: fixed` à partir de `xl` (US-003) :
+  // c'est cette même limite qui définit "desktop" pour la parallaxe souris
+  // et le flottement idle de l'avatar (US-013 / DESIGN_PROPOSAL_V2 §2).
+  const isDesktop = useBreakpointValue({ base: false, xl: true })
+  const parallaxEnabled = Boolean(isDesktop) && !shouldReduceMotion
 
-  const MotionText = motion(Text)
-  const MotionStack = motion(Stack)
-  const MotionButton = motion(Button)
-  const MotionBox = motion(Box)
-  const MotionLink = motion(Link)
+  const [bootLogVisible, setBootLogVisible] = useState(true)
+  const [scrambleActive, setScrambleActive] = useState(false)
+  const scrambledLastName = useScrambleText(LAST_NAME, scrambleActive)
+
+  useEffect(() => {
+    const totalMs = shouldReduceMotion ? BOOT_REDUCED_TOTAL_MS : BOOT_TOTAL_MS
+    const timeoutId = window.setTimeout(() => setBootLogVisible(false), totalMs)
+    return () => window.clearTimeout(timeoutId)
+  }, [shouldReduceMotion])
 
   // heroBoot : animation d'entrée signature du Hero (US-002). En cascade sur
   // chaque ligne via `staggerChildren`, désactivée si prefers-reduced-motion.
+  // `delayChildren` repousse le début de cette cascade jusqu'à la fin du
+  // journal de boot (BootLog, ci-dessous) — le contenu réel ne se révèle
+  // qu'une fois la mise en scène du "démarrage" terminée.
   const itemVariants: Variants = shouldReduceMotion ? heroBootReduced : heroBoot
   const parentVariants: Variants = {
-    animate: { transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 } },
+    animate: {
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.1,
+        delayChildren:
+          (shouldReduceMotion ? BOOT_REDUCED_TOTAL_MS : BOOT_TOTAL_MS) / 1000,
+      },
+    },
   }
   const hoverLiftTarget = (shouldReduceMotion ? hoverLiftReduced : hoverLift)
     .hover
@@ -44,10 +101,11 @@ const Sidebar = () => {
     <MotionBox
       initial="initial"
       animate="animate"
-      position={{ xl: 'fixed' }}
+      position={{ base: 'relative', xl: 'fixed' }}
       maxWidth={{ xl: '34%' }}
       top={{ lg: 0 }}
     >
+      <PerspectiveGrid parallaxEnabled={parallaxEnabled} />
       <motion.div
         id="sidebarCircle"
         className={`${styles.sidebar} ${
@@ -65,6 +123,11 @@ const Sidebar = () => {
         alignItems={{ xl: 'center' }}
       >
         <MotionStack variants={parentVariants} spacing={6} w="100">
+          <BootLog
+            lines={BOOT_LINES}
+            reduced={Boolean(shouldReduceMotion)}
+            visible={bootLogVisible}
+          />
           <MotionText
             variants={itemVariants}
             variant="accent"
@@ -80,7 +143,7 @@ const Sidebar = () => {
             textTransform="uppercase"
             variants={itemVariants}
           >
-            Solofomahery D.
+            {FIRST_NAME}
           </MotionText>
           <MotionText
             as="h4"
@@ -92,8 +155,11 @@ const Sidebar = () => {
             overflowWrap="break-word"
             sx={{ hyphens: 'auto', WebkitHyphens: 'auto', msHyphens: 'auto' }}
             variants={itemVariants}
+            onAnimationStart={
+              shouldReduceMotion ? undefined : () => setScrambleActive(true)
+            }
           >
-            RAKOTONINDRINA
+            {scrambledLastName}
           </MotionText>
           <MotionText
             variant="accentAlternative"
@@ -111,7 +177,7 @@ const Sidebar = () => {
             className={styles.marginTopSmall}
             variants={itemVariants}
           >
-            Développeur Frontend
+            {ROLE}
           </MotionText>
 
           <MotionText

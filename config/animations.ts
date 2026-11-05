@@ -164,8 +164,8 @@ const heroBoot = {
   },
 }
 const heroBootReduced = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.01 } },
+  initial: { opacity: 0, y: 0 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.01 } },
 }
 
 // 2. scrollReveal — apparition d'un bloc/section au scroll (whileInView).
@@ -181,8 +181,8 @@ const scrollReveal = {
   },
 }
 const scrollRevealReduced = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.01 } },
+  initial: { opacity: 0, y: 0 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.01 } },
 }
 
 // 3. hoverLift — survol/focus d'une carte interactive (projet, expérience).

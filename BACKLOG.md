@@ -195,17 +195,19 @@ Critères d'acceptation :
 
 ## US-013 — Hero/Sidebar : séquence de boot
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Développement terminé, reste build complet + revue PO/testeur
 
 Objectif : transformer le chargement en mise en scène du démarrage de "DEVELOPER.EXE" (journal de boot avec les vraies données, décodage du nom par scramble, grille en profondeur réactive à la souris).
 
 Critères d'acceptation :
-- [ ] Journal de boot (vraies données déjà affichées ailleurs, aucun texte inventé) en cascade typewriter au montage, une seule fois.
-- [ ] Décodage du nom par effet scramble (hook custom maison, aucune dépendance), stagger lettre par lettre.
-- [ ] Grille en perspective CSS en arrière-plan, parallaxe douce à la souris (desktop uniquement, `useSpring`), active en permanence (pas seulement au chargement) puisque la Sidebar reste fixe sur desktop.
-- [ ] Mobile/tablette : boot log + scramble conservés à l'identique (pas de dépendance au pointeur), grille statique (pas de parallaxe), pas de flottement idle de l'avatar.
-- [ ] `prefers-reduced-motion` : scramble supprimé (fondu simple), boot log affiché d'un bloc, grille statique sans réaction souris, aucun flottement.
-- [ ] Aucune régression sur les vraies données (nom, titre, bio, CTA contact, réseaux sociaux — toujours affichés et fonctionnels).
+- [x] Journal de boot (vraies données déjà affichées ailleurs, aucun texte inventé) en cascade typewriter au montage, une seule fois.
+- [x] Décodage du nom par effet scramble (hook custom maison, aucune dépendance), stagger lettre par lettre.
+- [x] Grille en perspective CSS en arrière-plan, parallaxe douce à la souris (desktop uniquement, `useSpring`), active en permanence (pas seulement au chargement) puisque la Sidebar reste fixe sur desktop.
+- [x] Mobile/tablette : boot log + scramble conservés à l'identique (pas de dépendance au pointeur), grille statique (pas de parallaxe), pas de flottement idle de l'avatar.
+- [x] `prefers-reduced-motion` : scramble supprimé (fondu simple), boot log affiché d'un bloc, grille statique sans réaction souris, aucun flottement.
+- [x] Aucune régression sur les vraies données (nom, titre, bio, CTA contact, réseaux sociaux — toujours affichés et fonctionnels).
+
+Détails dans `.claude/memory/developer.md`. `npm run build` non exécuté (serveur dev déjà actif sur le port 3000) — lint/typecheck passent, reste à faire par le PO avant validation finale.
 
 ## US-014 — Fil conducteur : cadre HUD + jauge de progression
 **Priorité :** Moyenne

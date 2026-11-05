@@ -36,3 +36,24 @@
 .marginTopSmall{
   margin-top: 12px !important;
 }
+.perspectiveGrid{
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  perspective: 800px;
+  pointer-events: none;
+}
+.perspectiveGridPlane{
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(var(--chakra-colors-border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--chakra-colors-border-subtle) 1px, transparent 1px);
+  background-size: 48px 48px;
+  /* rotateX(60deg) composé avec la translation de parallaxe directement dans
+     la valeur `transform` posée en style inline (PerspectiveGrid.tsx) — ne
+     JAMAIS redéfinir `transform` ici, un style inline l'écraserait toujours
+     entièrement. */
+  opacity: 0.18;
+}
