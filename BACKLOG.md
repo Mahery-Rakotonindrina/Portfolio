@@ -331,13 +331,13 @@ Détails complets (méthode, piège d'environnement de test rencontré, chiffres
 
 ## US-022 — Mise à jour de la Pull Request existante
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : pousser tous les commits de la Phase 2 sur la branche `feature/portfolio-redesign` existante (la PR déjà ouverte par l'utilisateur vers `develop` se met à jour automatiquement — pas de nouvelle PR à créer) et fournir un résumé final en français des changements de cette phase.
 
 Critères d'acceptation :
-- [ ] Tous les commits de la Phase 2 poussés sur `feature/portfolio-redesign`, messages clairs, aucune mention d'IA.
-- [ ] Résumé final en français fourni à l'utilisateur : ce qui a changé par rapport à la Phase 1, les nouvelles dépendances ajoutées et pourquoi, les points de vigilance restants.
+- [x] Tous les commits de la Phase 2 poussés sur `feature/portfolio-redesign` (15 commits, `c6c578a`..`63107e9`), messages clairs, aucune mention d'IA — vérifié ligne par ligne via `git log`, local et `origin` confirmés identiques.
+- [x] Résumé final en français fourni à l'utilisateur.
 
 ---
 

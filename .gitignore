@@ -38,3 +38,6 @@ tsconfig.tsbuildinfo
 
 # vercel
 .vercel
+
+# playwright MCP debug output
+.playwright-mcp/
