@@ -122,7 +122,7 @@ const Sidebar = () => {
         display={{ xl: 'flex' }}
         alignItems={{ xl: 'center' }}
       >
-        <MotionStack variants={parentVariants} spacing={6} w="100">
+        <MotionStack variants={parentVariants} spacing={6} w="100%">
           <BootLog
             lines={BOOT_LINES}
             reduced={Boolean(shouldReduceMotion)}
