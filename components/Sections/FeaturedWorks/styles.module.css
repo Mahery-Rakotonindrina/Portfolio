@@ -21,19 +21,22 @@
   padding: 0.25rem 0.25rem 1.5rem;
 }
 
-.track > * {
-  flex: 0 0 min(85vw, 380px);
-  scroll-snap-align: center;
-}
-
-/* Cosmétique uniquement (tailles de carte plus confortables sur grand
- * écran) — indépendant du seuil exact utilisé par ScrollTrigger.matchMedia
- * (ProjectGallery.tsx, aligné sur le breakpoint `xl`/80em du reste du site).
+/* Largeur de carte = largeur réelle du conteneur (pas un px fixe) : sur une
+ * largeur intermédiaire (ex. ~899px), le conteneur est souvent bien plus
+ * large qu'une carte à largeur fixe, donc centrer une carte dans tout cet
+ * espace laissait déborder les cartes voisines, coupées en plein milieu de
+ * leur contenu (bug remonté par le PO, US-018 post-fix). `flex: 0 0 100%`
+ * garantit qu'une seule carte occupe tout le conteneur à n'importe quelle
+ * largeur sous le breakpoint desktop (`xl`, voir ProjectGallery.tsx) ;
+ * `scroll-snap-align: start` plutôt que `center` pour un alignement net dès
+ * la première/dernière carte (avec une carte de la largeur exacte du
+ * conteneur, `start`/`center` sont équivalents en régime normal, mais
+ * `start` évite tout souci d'arrondi aux bords de la plage de scroll).
  */
-@media (min-width: 62em) {
-  .track > * {
-    flex: 0 0 min(60vw, 560px);
-  }
+.track > * {
+  flex: 0 0 100%;
+  max-width: 100%;
+  scroll-snap-align: start;
 }
 
 /* Filet de sécurité prefers-reduced-motion (critère d'acceptation US-018) :
