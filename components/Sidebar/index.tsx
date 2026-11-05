@@ -27,7 +27,7 @@ import { getTypewriterDurationMs } from 'hooks/useTypewriterLines'
 // Vraies données déjà affichées plus bas dans ce composant — source unique
 // réutilisée par le journal de boot (BOOT_LINES) pour ne jamais dupliquer/
 // désynchroniser un texte inventé (US-013 / DESIGN_PROPOSAL_V2 §2).
-const FIRST_NAME = 'Solofomahery D.'
+const FIRST_NAME = 'Mahery'
 const LAST_NAME = 'RAKOTONINDRINA'
 const ROLE = 'Développeur Frontend'
 
@@ -165,15 +165,6 @@ const Sidebar = () => {
           >
             {scrambledLastName}
           </MotionText>
-          <MotionText
-            variant="accentAlternative"
-            fontSize="sm"
-            className={styles.marginTopForce}
-            variants={itemVariants}
-          >
-            ou vous pouvez m’appeler Mahery, ça marche aussi 😉
-          </MotionText>
-
           <MotionText
             as="h3"
             textStyle="label"
