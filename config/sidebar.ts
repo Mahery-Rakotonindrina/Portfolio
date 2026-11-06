@@ -21,7 +21,7 @@ export const SocialMedias: SocialMedia[] = [
   },
   {
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/mahery-rakotonindrina-2b6888154/',
+    href: 'https://www.linkedin.com/in/mahery-rakotonindrina/',
     icon: FaLinkedin,
   },
   {
