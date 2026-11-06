@@ -127,7 +127,12 @@ const Portfolio = (): JSX.Element => {
                 <Experience />
               </Box>
             </FadeInLayout>
-            <FadeInLayout>
+            {/* threshold=0 : voir le commentaire dans FadeWhenVisible.tsx —
+                ce wrapper englobe le pin-spacer GSAP de ProjectGallery
+                (US-018), potentiellement très haut, qui rend le seuil 30%
+                par défaut mathématiquement inatteignable à certaines
+                tailles de fenêtre. */}
+            <FadeInLayout threshold={0}>
               <Box
                 id="works"
                 className="contentRow"

@@ -30,7 +30,19 @@ const FeaturedWorksSection = () => {
       as="section"
       initial="initial"
       whileInView="animate"
-      viewport={{ once: true, amount: 0.3 }}
+      // Bugfix (section "Mon best-of" restant invisible à certaines tailles
+      // de fenêtre, ex. 1920×900) : `amount` est une fraction de la SURFACE
+      // de CET élément qui doit être visible simultanément pour déclencher
+      // la cascade. Cette section contient le pin-spacer GSAP de
+      // ProjectGallery (US-018), potentiellement très haut (plusieurs
+      // milliers de px) — la fraction maximale visible en une fois y est
+      // plafonnée à `hauteur_viewport / hauteur_élément`, parfois sous la
+      // barre des 30% (confirmé : 900/3698 ≈ 24% à 1920×900), rendant le
+      // seuil historique inatteignable. `amount: 0` déclenche dès qu'un
+      // pixel de la section est visible, indépendamment de sa hauteur —
+      // n'affecte pas les autres sections (Hero/About/Experience/Contact),
+      // qui n'ont pas de pin-spacer et restent sur `amount: 0.3`.
+      viewport={{ once: true, amount: 0 }}
       variants={parentVariants}
     >
       <MotionText as="h2" textStyle="title" variants={itemVariants}>
