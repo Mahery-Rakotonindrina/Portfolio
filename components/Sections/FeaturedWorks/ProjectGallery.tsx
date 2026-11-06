@@ -70,41 +70,52 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
     // supposition implicite sur ce composant distant.
     gsap.registerPlugin(ScrollTrigger)
 
-    // Bugfix (remonté par le PO, "parfois ça ne s'affiche pas") : confirmé par
-    // instrumentation réelle (requêtes réseau + mesures DOM horodatées) que
+    // Bugfix (remonté par le PO, "parfois ça ne s'affiche pas") — 2e passe.
     // `ScrollTrigger` ne se réévalue nativement que sur
     // visibilitychange/DOMContentLoaded/load/resize (gsap/ScrollTrigger.js,
-    // `_autoRefresh`) — aucun de ces évènements ne suit le chargement d'une
-    // image après coup. Dans cette page, l'évènement `load` peut se déclencher
-    // AVANT que la largeur réelle du track (donc `getScrollDistance()`
-    // ci-dessous, utilisée à la fois pour `x` et pour `end`) ne se stabilise —
-    // observé jusqu'à 90px d'écart entre la valeur capturée au refresh de
-    // `load` et la valeur finale. Sans correctif, la fin du scrub reste figée
-    // sur cette valeur trop courte pour toute la session : la dernière carte
-    // reste partiellement/totalement hors champ. `loading="eager"`
-    // (FeaturedCard.tsx) réduit la fenêtre de risque ; ce refresh explicite une
-    // fois les 4 images confirmées chargées (ou en erreur, pour ne jamais
-    // rester bloqué) est le filet de sécurité qui corrige toute désynchronisation
-    // résiduelle — `invalidateOnRefresh: true` (posé plus bas) fait recalculer
-    // `x`/`end` à ce moment précis.
-    const images = Array.from(track.querySelectorAll('img'))
-    let pendingImages = images.filter((img) => !img.complete).length
-    const refreshIfAllSettled = () => {
-      if (pendingImages <= 0) {
+    // `_autoRefresh`) + un unique refresh différé d'une frame après la
+    // création d'un trigger pinné (`_queueRefreshAll`, commentaire du code
+    // source GSAP lui-même : "some frameworks dynamically load content and
+    // we can't rely on window's load/DOMContentLoaded events"). Un premier
+    // correctif (retiré ici) ne surveillait que le chargement des 4 images de
+    // cette galerie pour déclencher un refresh supplémentaire — confirmé
+    // insuffisant : toutes ces réévaluations (natives ou ciblées sur les
+    // images) restent des évènements PONCTUELS, qui ne se reproduisent
+    // jamais. Mesuré par instrumentation directe (`onRefresh` temporaire) :
+    // `wrapper.clientWidth`/`track.scrollWidth` peuvent encore changer une
+    // fois toutes ces occasions déjà consommées (ex. un léger réajustement
+    // de layout peu après le montage, ou tout autre élément de la page qui
+    // continue d'affecter le rendu après coup) — si ça arrive après la
+    // DERNIÈRE réévaluation ponctuelle disponible, rien ne corrige plus jamais
+    // la distance de scrub pour le reste de la session.
+    //
+    // Solution générale : un `ResizeObserver` sur `wrapper` ET `track` (les
+    // deux éléments dont les dimensions pilotent directement `getScrollDistance()`
+    // ci-dessous) pendant toute la durée de vie du composant, pas une
+    // vérification ponctuelle — contrairement à tout ce qui précède, il ne
+    // s'épuise jamais après un premier déclenchement, donc couvre n'importe
+    // quelle cause (y compris une cause encore inconnue aujourd'hui), sans
+    // avoir à lister chaque déclencheur possible. Débounce léger (120ms) pour
+    // éviter une tempête de refresh pendant un resize fluide. Pas de risque de
+    // boucle : `ScrollTrigger.refresh()` relit les dimensions existantes, il
+    // ne modifie pas lui-même la taille de `wrapper`/`track` (le pin ne fait
+    // que figer leur position, pas leur largeur), donc aucun déclenchement en
+    // cascade de l'observer par son propre refresh.
+    let refreshTimeoutId: number | undefined
+    const scheduleRefresh = () => {
+      if (refreshTimeoutId !== undefined) {
+        window.clearTimeout(refreshTimeoutId)
+      }
+      refreshTimeoutId = window.setTimeout(() => {
         ScrollTrigger.refresh()
-      }
+      }, 120)
     }
-    const onImageSettled = () => {
-      pendingImages -= 1
-      refreshIfAllSettled()
-    }
-    images.forEach((img) => {
-      if (!img.complete) {
-        img.addEventListener('load', onImageSettled, { once: true })
-        img.addEventListener('error', onImageSettled, { once: true })
-      }
-    })
-    refreshIfAllSettled()
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(scheduleRefresh)
+        : null
+    resizeObserver?.observe(wrapper)
+    resizeObserver?.observe(track)
 
     const mm = gsap.matchMedia()
     mm.add(DESKTOP_QUERY, () => {
@@ -153,10 +164,10 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
 
     return () => {
       mm.revert()
-      images.forEach((img) => {
-        img.removeEventListener('load', onImageSettled)
-        img.removeEventListener('error', onImageSettled)
-      })
+      resizeObserver?.disconnect()
+      if (refreshTimeoutId !== undefined) {
+        window.clearTimeout(refreshTimeoutId)
+      }
     }
   }, [])
 
