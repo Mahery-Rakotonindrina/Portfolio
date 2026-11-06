@@ -125,7 +125,16 @@ const FeaturedCard = ({ work, idx, onOpenDetail }: FeaturedCardProps) => {
             alt={title}
             objectFit="cover"
             objectPosition={objectPosition}
-            loading="lazy"
+            // Bugfix (remonté par le PO, "parfois ça ne s'affiche pas") : ces 4
+            // images sont peu nombreuses et connues à l'avance, et la section
+            // entière dépend de leur largeur réelle (ProjectGallery.tsx calcule
+            // la distance de scrub GSAP sur `track.scrollWidth`) — `lazy` n'apporte
+            // ici aucun bénéfice réel (l'utilisateur traverse forcément les 4
+            // cartes via le pin+scrub) mais ouvre une fenêtre de désynchronisation
+            // si le chargement survient après le refresh GSAP déclenché par
+            // l'évènement `load`. Voir le filet de sécurité (refresh explicite une
+            // fois les 4 images chargées) dans ProjectGallery.tsx.
+            loading="eager"
             fallback={<Skeleton height="100%" width="100%" />}
             // Partagé avec l'image de ProjectDetailModal : Framer Motion
             // anime le FLIP entre les deux au clic. Désactivé sous

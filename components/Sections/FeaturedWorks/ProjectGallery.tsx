@@ -70,6 +70,42 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
     // supposition implicite sur ce composant distant.
     gsap.registerPlugin(ScrollTrigger)
 
+    // Bugfix (remonté par le PO, "parfois ça ne s'affiche pas") : confirmé par
+    // instrumentation réelle (requêtes réseau + mesures DOM horodatées) que
+    // `ScrollTrigger` ne se réévalue nativement que sur
+    // visibilitychange/DOMContentLoaded/load/resize (gsap/ScrollTrigger.js,
+    // `_autoRefresh`) — aucun de ces évènements ne suit le chargement d'une
+    // image après coup. Dans cette page, l'évènement `load` peut se déclencher
+    // AVANT que la largeur réelle du track (donc `getScrollDistance()`
+    // ci-dessous, utilisée à la fois pour `x` et pour `end`) ne se stabilise —
+    // observé jusqu'à 90px d'écart entre la valeur capturée au refresh de
+    // `load` et la valeur finale. Sans correctif, la fin du scrub reste figée
+    // sur cette valeur trop courte pour toute la session : la dernière carte
+    // reste partiellement/totalement hors champ. `loading="eager"`
+    // (FeaturedCard.tsx) réduit la fenêtre de risque ; ce refresh explicite une
+    // fois les 4 images confirmées chargées (ou en erreur, pour ne jamais
+    // rester bloqué) est le filet de sécurité qui corrige toute désynchronisation
+    // résiduelle — `invalidateOnRefresh: true` (posé plus bas) fait recalculer
+    // `x`/`end` à ce moment précis.
+    const images = Array.from(track.querySelectorAll('img'))
+    let pendingImages = images.filter((img) => !img.complete).length
+    const refreshIfAllSettled = () => {
+      if (pendingImages <= 0) {
+        ScrollTrigger.refresh()
+      }
+    }
+    const onImageSettled = () => {
+      pendingImages -= 1
+      refreshIfAllSettled()
+    }
+    images.forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener('load', onImageSettled, { once: true })
+        img.addEventListener('error', onImageSettled, { once: true })
+      }
+    })
+    refreshIfAllSettled()
+
     const mm = gsap.matchMedia()
     mm.add(DESKTOP_QUERY, () => {
       const getScrollDistance = () =>
@@ -117,6 +153,10 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
 
     return () => {
       mm.revert()
+      images.forEach((img) => {
+        img.removeEventListener('load', onImageSettled)
+        img.removeEventListener('error', onImageSettled)
+      })
     }
   }, [])
 
