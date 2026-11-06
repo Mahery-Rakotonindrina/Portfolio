@@ -153,10 +153,9 @@ const Detail = ({ onOpen }: IDetail) => {
               professionnellement, avec une spécialisation en <b>Frontend</b>{' '}
               notamment en React et Next.js. J&apos;interviens principalement
               sur{' '}
-              <b>la conception d&apos;interfaces modernes et performantes</b>,
-              l&apos;{' '}
+              <b>la conception d&apos;interfaces modernes et performantes</b>,{' '}
               <b>
-                l&apos;architecture front-end, l&apos;ntégration d&apos;APIs
+                l&apos;architecture front-end, l&apos;intégration d&apos;APIs
               </b>
               , et{' '}
               <Text as="span" variant="emphasis">

@@ -48,7 +48,7 @@ export const WorksList: Work[] = [
   {
     title: 'GESCOM',
     description:
-      "Mon tout premier projet d’envergure, réalisé dans le cadre de mon stage de fin d'études chez SIDINA (Groupe MANAO),pour l’obtention de mon Master 2. On a conçu et développé l'application de A à Z avec CodeIgniter 4 et jQuery pour les animations et interactions JavaScript.",
+      "Mon tout premier projet d’envergure, réalisé dans le cadre de mon stage de fin d'études chez SIDINA (Groupe MANAO), pour l’obtention de mon Master 2. On a conçu et développé l'application de A à Z avec CodeIgniter 4 et jQuery pour les animations et interactions JavaScript.",
     src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4QmHWzGjMU4y_gXyntQfWQQD93cQPklwA1w&s',
     // Même cas que Becquet! : ctaUrl identique à l'image de couverture.
     ctaUrl:

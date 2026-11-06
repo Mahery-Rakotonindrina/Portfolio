@@ -43,13 +43,13 @@ export const Experiences: {
       dark: 'https://www.vivetic-group.com/wp-content/uploads/2020/09/format-page_vignette.png',
     },
     roles: [
-      <>Igénieur en Développement Web au sein du service informatique</>,
+      <>Ingénieur en Développement Web au sein du service informatique</>,
       <>
         Jusqu’en novembre 2024, j’étais développeur web au sein du service
         informatique de Vivetic Group. J’ai travaillé sur plusieurs projets
         internes, notamment la gestion des congés, de la cantine, du transport,
         ainsi que l’outil Viapost, utilisé quotidiennement par les équipes. Ces
-        Ces outils visaient à optimiser les processus internes de l’entreprise.
+        outils visaient à optimiser les processus internes de l’entreprise.
       </>,
       <>
         J’ai également contribué à des projets externes liés à la GED (Gestion
