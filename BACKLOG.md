@@ -165,14 +165,14 @@ Critères d'acceptation :
 
 ## US-011 — Finalisation Git / Pull Request
 **Priorité :** Haute
-**Statut :** À faire
+**Statut :** Terminé
 
 Objectif : committer, pousser la branche, ouvrir la PR vers `develop`.
 
 Critères d'acceptation :
 - [x] Commits réguliers, messages clairs, aucune mention d'IA. 11 commits sur `feature/portfolio-redesign`, un par US (+ un correctif), aucune ligne de co-auteur/mention Claude/IA, conformément à `RULES.md`.
 - [x] Branche poussée sur origin. `git status -sb` confirme `feature/portfolio-redesign` à jour avec `origin/feature/portfolio-redesign`, 10 commits d'avance sur `origin/develop`.
-- [ ] Pull Request créée vers `develop`. `gh` CLI non installé sur cette machine (ni Bash ni PowerShell) — conformément à la consigne, pas d'installation d'outil supplémentaire pour ça : lien de création manuelle fourni à l'utilisateur à la place.
+- [x] Pull Request vers `develop`. **PR #1** (`feature/portfolio-redesign` → `develop`), déjà ouverte par l'utilisateur lui-même, confirmée via l'API GitHub publique (`état: open`) — se met à jour automatiquement à chaque push, aucune nouvelle PR à créer. Mise à jour de sa description non faite : `gh` CLI non installé sur cette machine et pas de jeton d'accès disponible pour l'API — texte de description Phase 2 proposé à l'utilisateur à la place, prêt à coller.
 
 ---
 
@@ -182,7 +182,7 @@ Critères d'acceptation :
 
 ## US-012 — Fondation : scroll à inertie (Lenis) + intégration GSAP/Framer Motion
 **Priorité :** Haute (bloquant pour toutes les US suivantes de cette phase)
-**Statut :** À faire
+**Statut :** Terminé (Safari/macOS non vérifiable depuis cette machine Windows, voir critère ci-dessous)
 
 Objectif : poser le scroll à inertie global (Lenis) qui sert de fondation à toutes les scènes scrubbed des US suivantes, sans rien casser de l'existant.
 
@@ -195,7 +195,7 @@ Critères d'acceptation :
 
 ## US-013 — Hero/Sidebar : séquence de boot
 **Priorité :** Haute
-**Statut :** Développement terminé, reste build complet + revue PO/testeur
+**Statut :** Terminé
 
 Objectif : transformer le chargement en mise en scène du démarrage de "DEVELOPER.EXE" (journal de boot avec les vraies données, décodage du nom par scramble, grille en profondeur réactive à la souris).
 
@@ -269,7 +269,7 @@ Détail du mécanisme, piège d'indentation ESLint rencontré, et méthode de v�
 
 ## US-018 — Projects : galerie horizontale pilotée par le scroll (GSAP)
 **Priorité :** Haute
-**Statut :** Développement terminé, reste build complet + revue PO/testeur
+**Statut :** Terminé
 
 Objectif : remplacer la grille statique 2×2 (US-006) par une galerie en défilement horizontal piloté par le scroll vertical (pin + scrub GSAP ScrollTrigger), avec vue de détail en morph et fallback statique en `prefers-reduced-motion`.
 
