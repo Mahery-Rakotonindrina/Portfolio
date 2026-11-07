@@ -54,4 +54,18 @@ export const WorksList: Work[] = [
     ctaUrl:
       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4QmHWzGjMU4y_gXyntQfWQQD93cQPklwA1w&s',
   },
+  {
+    title: 'Assisteo Agny',
+    description:
+      "Assisteo Agny est mon projet personnel en cours : un assistant IA de poche pour le web et Android, avec une seule base de code pour les deux (Next.js, Capacitor). Il scanne des photos classées par catégorie, suit les colis, les dépenses et les bénéfices, génère des todo lists à partir d'un document, et donne les valeurs nutritionnelles et des recettes. Backend avec Supabase, Redis et PostgreSQL.",
+    src: '/works/assisteo-agny.webp',
+    ctaUrl: 'https://assisteo-agny.vercel.app',
+  },
+  {
+    title: 'Tikou',
+    description:
+      "Tikou est un site e-commerce pour une marque malgache d'artisanat en raphia et cuir, que j'ai conçu, développé et mis en ligne seul avec Next.js, TypeScript et Tailwind CSS : catalogue, panier, contact, bilingue FR/EN, responsive et optimisé SEO. Il est en ligne, avec de vrais visiteurs et commandes.",
+    src: '/works/tikou.webp',
+    ctaUrl: 'https://www.tikou-mdg.com',
+  },
 ]
