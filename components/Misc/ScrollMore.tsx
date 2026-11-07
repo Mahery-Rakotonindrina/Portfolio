@@ -1,10 +1,4 @@
-import {
-  Box,
-  Icon,
-  Text,
-  useBreakpointValue,
-  useColorModeValue,
-} from '@chakra-ui/react'
+import { Box, Icon, useBreakpointValue } from '@chakra-ui/react'
 import { RiMouseLine } from 'react-icons/ri'
 import { motion, Variants, AnimatePresence } from 'framer-motion'
 import useScrollDirection, { ScrollDirection } from 'hooks/useScrollDirection'
@@ -33,30 +27,19 @@ const scrollMoreVariants: Variants = {
   },
 }
 
-const emailVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 250,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-  },
-  exit: {
-    opacity: [1, 0],
-    y: [0, 250],
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
-  },
-}
-
+// Retiré (PO) : ce composant portait aussi un lien email vertical
+// (`writing-mode: vertical-rl`) qui apparaissait en bas à droite au scroll
+// vers le bas — exactement la zone où l'Avatar sticky peut se trouver,
+// d'où le texte qui s'imprimait littéralement par-dessus la photo (bug
+// remonté par le PO, capture à l'appui). Doublon par ailleurs : l'email est
+// déjà accessible via le CTA de la Sidebar et la section Contact (avec son
+// propre effet de scramble + copie), donc retiré plutôt que repositionné —
+// une 3e voie d'accès, moins soignée (couleurs `teal`/`cyan` hors des
+// tokens sémantiques du thème) et bogguée, n'apportait rien. Le repère
+// "scroll" (souris qui rebondit) reste, lui n'a jamais posé ce problème.
 const ScrollMore = () => {
   const isMobile = useBreakpointValue(mobileBreakpointsMap)
   const scrollDirection = useScrollDirection(false, isMobile)
-  const emailColor = useColorModeValue('gray.800', 'gray.400')
-  const emailLine = useColorModeValue('teal.500', 'cyan.200')
 
   return (
     <Box
@@ -81,57 +64,6 @@ const ScrollMore = () => {
               color="currentColor"
               opacity="0.75"
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {scrollDirection === ScrollDirection.Down && (
-          <motion.div
-            initial="hidden"
-            animate="show"
-            exit="exit"
-            variants={emailVariants}
-            whileHover={{ y: -50 }}
-            style={{
-              writingMode: 'vertical-rl',
-              position: 'fixed',
-              right: '8%',
-              bottom: '-8%',
-            }}
-          >
-            <Text
-              as="a"
-              paddingY={3}
-              fontFamily="monospace"
-              href="mailto:maeryrakotonindrina17@gmail.com"
-              target="_blank"
-              rel="noreferrer"
-              color={emailColor}
-              _hover={{
-                color: emailLine,
-                _after: {
-                  backgroundColor: emailLine,
-                  opacity: 1,
-                },
-              }}
-              position="relative"
-              letterSpacing={3}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              _after={{
-                backgroundColor: emailLine,
-                width: '2px',
-                opacity: 0.5,
-                content: '""',
-                flex: 1,
-                height: { base: '5em', xl: '8em' },
-                margin: 'auto',
-                marginTop: '10px',
-              }}
-            >
-              maeryrakotonindrina17@gmail.com{' '}
-            </Text>
           </motion.div>
         )}
       </AnimatePresence>
