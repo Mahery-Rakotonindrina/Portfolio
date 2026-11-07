@@ -23,7 +23,7 @@ import {
   SiMysql,
   SiMongodb,
   SiRedis,
-  SiFramer,
+  SiTailwindcss,
   SiGit,
   SiGnubash,
   SiVisualstudiocode,
@@ -152,7 +152,7 @@ export const Skills: {
     },
     {
       name: 'Tailwind CSS',
-      icon: SiFramer,
+      icon: SiTailwindcss,
     },
     {
       name: 'Bootstrap',

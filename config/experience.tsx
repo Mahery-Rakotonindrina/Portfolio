@@ -1,10 +1,14 @@
-export type Company = 'Domoti' | 'Vivetic' | 'Pushtech'
+export type Company = 'Domoti' | 'Freelance' | 'Vivetic' | 'Manao' | 'Pushtech'
 
 export type CompanyDetail = {
   name: string
   longName: string
   duration: string
-  logo: {
+  // Optionnel : "Freelance" (CV, aucun client nommé) et "Manao" n'ont pas de
+  // logo externe vérifiable à afficher — voir TimelineItem.tsx pour le
+  // repli visuel (icône générique) plutôt qu'une image inventée/mal
+  // attribuée.
+  logo?: {
     light: string
     dark?: string
   }
@@ -33,6 +37,30 @@ export const Experiences: {
       </>,
     ],
   },
+  // Ajouté (CV) : manquait entièrement de la timeline — seul le projet
+  // GIPROD Androy en résultant apparaît dans la galerie "best-of". Mission
+  // freelance menée EN PARALLÈLE du poste Vivetic (CV : "Freelance, temps
+  // partiel, en parallèle du poste principal"), pas un poste séquentiel —
+  // d'où la précision dans le texte plutôt qu'une simple liste chronologique
+  // muette sur ce chevauchement.
+  Freelance: {
+    name: 'Freelance',
+    longName: 'Développeur Fullstack — Freelance',
+    duration: 'Sep 2022 - Mai 2023',
+    roles: [
+      <>
+        Développeur Fullstack indépendant, en parallèle de mon poste chez
+        Vivetic
+      </>,
+      <>
+        Entre septembre 2022 et mai 2023, j’ai mené cette mission freelance en
+        parallèle de mon poste chez Vivetic : GIPROD Androy, une application de
+        recensement des habitants d’Androy. Front-end en React.js, back-end en
+        PHP/Laravel, le tout connecté à une base de données relationnelle via
+        une API REST.
+      </>,
+    ],
+  },
   Vivetic: {
     name: 'VIVETIC',
     longName: 'VIVETIC GROUP',
@@ -43,13 +71,13 @@ export const Experiences: {
       dark: 'https://www.vivetic-group.com/wp-content/uploads/2020/09/format-page_vignette.png',
     },
     roles: [
-      <>Igénieur en Développement Web au sein du service informatique</>,
+      <>Ingénieur en Développement Web au sein du service informatique</>,
       <>
         Jusqu’en novembre 2024, j’étais développeur web au sein du service
         informatique de Vivetic Group. J’ai travaillé sur plusieurs projets
         internes, notamment la gestion des congés, de la cantine, du transport,
         ainsi que l’outil Viapost, utilisé quotidiennement par les équipes. Ces
-        Ces outils visaient à optimiser les processus internes de l’entreprise.
+        outils visaient à optimiser les processus internes de l’entreprise.
       </>,
       <>
         J’ai également contribué à des projets externes liés à la GED (Gestion
@@ -64,6 +92,22 @@ export const Experiences: {
       </>,
     ],
   },
+  // Ajouté (CV) : stage de fin d'études chez Manao Logiciels, absent de la
+  // timeline — seul le projet qui en est issu (GESCOM, galerie "best-of")
+  // était visible, sans que l'expérience elle-même n'apparaisse ici.
+  Manao: {
+    name: 'Manao Logiciels',
+    longName: 'Manao Logiciels',
+    duration: 'Mar 2021 - Sep 2021',
+    roles: [
+      <>Stagiaire en développement Web — stage de fin d’études</>,
+      <>
+        Mon tout premier projet d’envergure : la conception et la réalisation
+        d’une application de gestion des factures périodiques, avec CodeIgniter
+        4, jQuery et MySQL/MariaDB.
+      </>,
+    ],
+  },
   Pushtech: {
     name: 'PUSHTECH',
     longName: 'PUSHTECH CONSULTING',
@@ -75,10 +119,14 @@ export const Experiences: {
     roles: [
       <>Développeur Backend à temps partiel</>,
       <>
+        {/* Corrigé (CV) : la Licence professionnelle se terminait en 2019,
+            l'Ingénierie informatique/Master courait 2019-2021 — en janvier
+            2019, je débutais tout juste ce cursus, je ne le "finalisais" pas
+            (l'ancien texte le disait, à tort). */}
         En janvier 2019, j’ai commencé à travailler comme développeur Symfony à
-        temps partiel, tout en finalisant mon Master 2 en Informatique. Cette
-        période m’a permis de mettre en pratique mes compétences tout en
-        poursuivant mon parcours académique.
+        temps partiel, tout en poursuivant mes études en ingénierie
+        informatique. Cette période m’a permis de mettre en pratique mes
+        compétences tout en poursuivant mon parcours académique.
       </>,
     ],
   },
@@ -86,6 +134,8 @@ export const Experiences: {
 
 export const ExperiencesList = [
   Experiences.Domoti,
+  Experiences.Freelance,
   Experiences.Vivetic,
+  Experiences.Manao,
   Experiences.Pushtech,
 ]

@@ -4,11 +4,13 @@ import {
   GridItem,
   Stack,
   Box,
+  Link,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 import Script from 'next/script'
 import OpenGraphHead from 'components/Misc/OpenGraphHead'
+import ProgressHUD from 'components/Misc/ProgressHUD'
 import FadeInLayout from 'components/Layout/FadeWhenVisible'
 import Menu from 'components/Menu'
 import Sidebar from 'components/Sidebar'
@@ -44,7 +46,36 @@ const Portfolio = (): JSX.Element => {
         `}
       </Script>
       <OpenGraphHead />
+      {/* Accessibilité : premier élément focusable de la page, invisible tant
+          qu'il n'a pas le focus clavier — permet de sauter directement au
+          contenu sans traverser la nav/Sidebar à chaque Tab. Absent du site
+          jusqu'ici (revue PO). */}
+      <Link
+        href="#main-content"
+        position="absolute"
+        left="-9999px"
+        top="0"
+        width="1px"
+        height="1px"
+        overflow="hidden"
+        zIndex="popover"
+        padding={3}
+        bg="bg.surface"
+        color="text.primary"
+        borderWidth="1px"
+        borderColor="accent.default"
+        _focus={{
+          left: 4,
+          top: 4,
+          width: 'auto',
+          height: 'auto',
+          overflow: 'visible',
+        }}
+      >
+        Aller au contenu principal
+      </Link>
       <Menu />
+      <ProgressHUD />
       <Grid
         id="mainGrid"
         templateColumns={{
@@ -71,11 +102,22 @@ const Portfolio = (): JSX.Element => {
           <Sidebar />
         </GridItem>
         <GridItem
+          id="main-content"
           as="main"
           padding={mainContent}
           rowSpan={2}
           colSpan={{ base: 1, sm: 2, md: 2, lg: 3, xl: 3 }}
-          overflow="hidden"
+          // US-015 : `overflow: hidden` sur CET ancêtre désactive totalement
+          // `position: sticky` pour tout descendant (CSS en fait le
+          // "conteneur de scroll" de référence, qui ne défile jamais
+          // lui-même puisque c'est `window` qui scrolle, pas lui — le
+          // verrouillage sticky de Detail.tsx ne collait donc jamais,
+          // confirmé par mesure réelle). Limité à `xl` (seul breakpoint où
+          // le verrouillage s'active) ; `base`/withdrawn breakpoints
+          // gardent la protection anti-débordement horizontal d'origine.
+          // Vérifié sans régression de largeur (scrollWidth === clientWidth)
+          // à 375/768/1440px après ce changement.
+          overflow={{ base: 'hidden', xl: 'visible' }}
         >
           <Stack w="100" spacing={24}>
             <FadeInLayout>
@@ -84,7 +126,14 @@ const Portfolio = (): JSX.Element => {
                 className="contentRow"
                 minH={{ lg: '100vh' }}
                 display="flex"
-                alignItems="center"
+                // US-015 : au verrouillage scrubbed de Detail.tsx (desktop,
+                // hors reduced-motion), la colonne About devient très haute
+                // (sticky-lock ~250vh) ; `flex-start` évite que l'Avatar
+                // (sibling plus court) se retrouve centré au milieu de cette
+                // hauteur verrouillée (quasi hors-écran pendant le lock) —
+                // décision technique à valider par le designer/PO si le
+                // rendu ne convient pas.
+                alignItems={{ base: 'center', xl: 'flex-start' }}
                 paddingTop={{ base: 0, lg: 20, xl: 0 }}
                 paddingBottom={{ base: 12, lg: 0 }}
                 flexDirection={{
@@ -108,7 +157,12 @@ const Portfolio = (): JSX.Element => {
                 <Experience />
               </Box>
             </FadeInLayout>
-            <FadeInLayout>
+            {/* threshold=0 : voir le commentaire dans FadeWhenVisible.tsx —
+                ce wrapper englobe le pin-spacer GSAP de ProjectGallery
+                (US-018), potentiellement très haut, qui rend le seuil 30%
+                par défaut mathématiquement inatteignable à certaines
+                tailles de fenêtre. */}
+            <FadeInLayout threshold={0}>
               <Box
                 id="works"
                 className="contentRow"
