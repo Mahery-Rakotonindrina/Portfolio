@@ -18,6 +18,7 @@ import { motion } from 'framer-motion'
 import { BiLinkExternal } from 'react-icons/bi'
 import { Work } from 'config/works'
 import { modalEnter, modalEnterReduced } from 'config/animations'
+import useLenisLock from 'hooks/useLenisLock'
 
 export type ProjectDetailModalProps = {
   work: Work | null
@@ -55,6 +56,12 @@ const ProjectDetailModal = ({
     'rgba(237, 242, 247, 0.92)',
     'rgba(11, 13, 18, 0.92)'
   )
+
+  // Bugfix (PO, "je scroll dans le détail et la galerie scroll en
+  // background") : voir hooks/useLenisLock.ts — Chakra ne bloque que le
+  // scroll natif du body, pas Lenis, qui continuait de faire défiler la
+  // page (et donc le scrub GSAP de la galerie) sous ce modal plein écran.
+  useLenisLock(isOpen)
 
   if (!work) {
     return null

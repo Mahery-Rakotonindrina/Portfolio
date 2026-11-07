@@ -12,6 +12,7 @@ import { useReducedMotion } from 'framer-motion'
 import styles from './styles.module.css'
 import SkillsRelationMap from './SkillsRelationMap'
 import { modalEnter, modalEnterReduced } from 'config/animations'
+import useLenisLock from 'hooks/useLenisLock'
 
 type ISkillSetModal = {
   isOpen: boolean
@@ -35,6 +36,9 @@ const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
     'rgba(237, 242, 247, 0.88)',
     'rgba(11, 13, 18, 0.9)'
   )
+
+  // Même bugfix que ProjectDetailModal.tsx (PO) — voir hooks/useLenisLock.ts.
+  useLenisLock(isOpen)
 
   return (
     <Modal
