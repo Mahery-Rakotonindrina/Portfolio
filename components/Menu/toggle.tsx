@@ -1,26 +1,45 @@
 /* eslint-disable react/no-multi-comp */
 import * as React from 'react'
-import { motion } from 'framer-motion'
+import { motion, SVGMotionProps } from 'framer-motion'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Path = (props: any) => (
+// Ids partagés avec `Navigation.tsx` : `MOBILE_NAV_ID` pour `aria-controls`
+// (pointe vers le conteneur de nav mobile) et `MOBILE_MENU_TOGGLE_ID` pour
+// rendre le focus au bouton hamburger après une fermeture au clavier
+// (Escape) — un seul point de vérité plutôt que deux chaînes dupliquées.
+export const MOBILE_NAV_ID = 'mobileNav'
+export const MOBILE_MENU_TOGGLE_ID = 'mobileMenuToggle'
+
+type PathProps = SVGMotionProps<SVGPathElement> & { isDarkMode?: boolean }
+
+// `isDarkMode` ne doit jamais atterrir sur l'élément DOM `motion.path` (React
+// lève un warning "does not recognize the 'isDarkMode' prop" sinon) — on le
+// consomme ici pour calculer `stroke`, puis on ne propage que le reste
+// (`pathProps`), qui correspond bien à de vrais attributs SVG/motion.
+const Path = ({ isDarkMode, ...pathProps }: PathProps) => (
   <motion.path
     fill="transparent"
     strokeWidth="3"
-    stroke={props?.isDarkMode ? 'hsl(240, 100%, 94%)' : 'hsl(0, 0%, 7%)'}
+    stroke={isDarkMode ? 'hsl(240, 100%, 94%)' : 'hsl(0, 0%, 7%)'}
     strokeLinecap="round"
-    {...props}
+    {...pathProps}
   />
 )
 
 export const MenuToggle = ({
   toggle,
+  isOpen,
   isDarkMode = false,
 }: {
   toggle(): void
+  isOpen: boolean
   isDarkMode?: boolean
 }) => (
   <button
+    id={MOBILE_MENU_TOGGLE_ID}
+    type="button"
+    aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+    aria-expanded={isOpen}
+    aria-controls={MOBILE_NAV_ID}
     onClick={toggle}
     style={{
       width: '40px',
@@ -76,7 +95,11 @@ const MobileMenu = ({
     }}
   >
     {/* <motion.div className="background" variants={sidebar} /> */}
-    <MenuToggle toggle={() => toggle()} isDarkMode={isDarkMode} />
+    <MenuToggle
+      toggle={() => toggle()}
+      isOpen={isOpen}
+      isDarkMode={isDarkMode}
+    />
   </motion.nav>
 )
 
