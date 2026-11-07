@@ -175,6 +175,19 @@ const Sidebar = () => {
           >
             {ROLE}
           </MotionText>
+          {/* Infos pratiques réelles du CV (disponibilité remote + langues),
+              invisibles jusqu'ici sur le site alors que ce sont des critères
+              de recherche fréquents côté recruteur — jamais affichées nulle
+              part ailleurs sur la page. */}
+          <MotionText
+            as="span"
+            textStyle="label"
+            color="text.tertiary"
+            fontSize="xs"
+            variants={itemVariants}
+          >
+            Remote (UTC+3) · FR · EN · MG
+          </MotionText>
 
           <MotionText
             variant="description"

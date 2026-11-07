@@ -4,6 +4,7 @@ import {
   GridItem,
   Stack,
   Box,
+  Link,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
@@ -45,6 +46,34 @@ const Portfolio = (): JSX.Element => {
         `}
       </Script>
       <OpenGraphHead />
+      {/* Accessibilité : premier élément focusable de la page, invisible tant
+          qu'il n'a pas le focus clavier — permet de sauter directement au
+          contenu sans traverser la nav/Sidebar à chaque Tab. Absent du site
+          jusqu'ici (revue PO). */}
+      <Link
+        href="#main-content"
+        position="absolute"
+        left="-9999px"
+        top="0"
+        width="1px"
+        height="1px"
+        overflow="hidden"
+        zIndex="popover"
+        padding={3}
+        bg="bg.surface"
+        color="text.primary"
+        borderWidth="1px"
+        borderColor="accent.default"
+        _focus={{
+          left: 4,
+          top: 4,
+          width: 'auto',
+          height: 'auto',
+          overflow: 'visible',
+        }}
+      >
+        Aller au contenu principal
+      </Link>
       <Menu />
       <ProgressHUD />
       <Grid
@@ -73,6 +102,7 @@ const Portfolio = (): JSX.Element => {
           <Sidebar />
         </GridItem>
         <GridItem
+          id="main-content"
           as="main"
           padding={mainContent}
           rowSpan={2}
