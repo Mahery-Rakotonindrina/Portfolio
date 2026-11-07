@@ -81,18 +81,39 @@ const ProjectDetailModal = ({
         }}
       >
         <ModalCloseButton zIndex={1} />
+        {/* Bugfix (PO, "je ne veux pas de scroll, tout sur une page, image à
+            gauche et texte à droite") : image/texte passent en 2 colonnes à
+            partir de `md`, hauteur du bloc plafonnée à la fenêtre (padding du
+            ModalCloseButton déduit) pour que tout rentre sans défiler.
+            Bugfix 2 (PO, "l'image est coupée") : une 1ère version étirait la
+            colonne image à `height: 100%` de la ligne (`align-items: stretch`)
+            — sur une étude de cas longue (texte haut), ça forçait l'image dans
+            un cadre bien plus étroit/haut que son vrai ratio 16:10, et
+            `objectFit="cover"` rognait large des deux côtés. L'image garde
+            maintenant son vrai ratio (`AspectRatio`, calée sur la largeur de
+            sa colonne, 45%) à toutes les tailles ; la ligne est centrée
+            verticalement (`alignItems: center`) plutôt qu'étirée. En dessous
+            de `md` (pas de place pour 2 colonnes), empilement vertical
+            inchangé, défilement standard d'un modal plein écran mobile.
+            `scrollBehavior="inside"` du Modal (ci-dessus) reste un filet de
+            sécurité pur, pas le comportement visé — tailles de texte et
+            espacements resserrés spécifiquement pour que l'étude de cas (3
+            sections) tienne sans jamais y recourir sur un écran desktop
+            courant. */}
         <ModalBody
           display="flex"
-          flexDirection="column"
+          flexDirection={{ base: 'column', md: 'row' }}
           alignItems="center"
           justifyContent="center"
           width="100%"
-          maxWidth="720px"
+          maxWidth="1100px"
+          maxHeight={{ md: 'calc(100vh - 96px)' }}
           mx="auto"
-          py={{ base: 16, md: 10 }}
-          gap={6}
+          my="auto"
+          py={{ base: 16, md: 8 }}
+          gap={{ base: 6, md: 10 }}
         >
-          <Box width="100%">
+          <Box width={{ base: '100%', md: '45%' }} flexShrink={0}>
             <AspectRatio ratio={16 / 10}>
               <MotionImage
                 src={work.src}
@@ -105,76 +126,89 @@ const ProjectDetailModal = ({
               />
             </AspectRatio>
           </Box>
-          <Text as="h2" textStyle="title" textAlign="center">
-            {work.title}
-          </Text>
-          {work.caseStudy ? (
-            // Étude de cas (PO, "la modale répète exactement le même texte
-            // que la carte") : contexte/défi/résultat, en plus de la
-            // description courte déjà affichée sur la carte — alignée à
-            // gauche (se lit mieux sur un texte plus long que centré).
-            // Seuls Becquet!/CoreWeb l'ont pour l'instant (faits confirmés
-            // par le PO) ; les autres projets gardent la description seule.
-            <Stack spacing={5} width="100%" textAlign="left">
-              <Box>
-                <Text
-                  as="h3"
-                  textStyle="label"
-                  color="accent.default"
-                  marginBottom={1}
-                >
-                  Contexte
-                </Text>
-                <Text variant="description" textStyle="body">
-                  {work.caseStudy.context}
-                </Text>
-              </Box>
-              <Box>
-                <Text
-                  as="h3"
-                  textStyle="label"
-                  color="accent.default"
-                  marginBottom={1}
-                >
-                  Le défi
-                </Text>
-                <Text variant="description" textStyle="body">
-                  {work.caseStudy.challenge}
-                </Text>
-              </Box>
-              <Box>
-                <Text
-                  as="h3"
-                  textStyle="label"
-                  color="accent.default"
-                  marginBottom={1}
-                >
-                  Résultat
-                </Text>
-                <Text variant="description" textStyle="body">
-                  {work.caseStudy.result}
-                </Text>
-              </Box>
-            </Stack>
-          ) : (
-            <Text variant="description" textStyle="body" textAlign="center">
-              {work.description}
+          <Stack
+            flex="1"
+            justifyContent="center"
+            spacing={4}
+            textAlign={{ base: 'center', md: 'left' }}
+            overflowY="auto"
+            minHeight={0}
+          >
+            <Text as="h2" textStyle="title">
+              {work.title}
             </Text>
-          )}
-          {showProjectLink && (
-            <Link
-              href={work.ctaUrl}
-              target="_blank"
-              rel="noreferrer"
-              display="inline-flex"
-              alignItems="center"
-              gap={1}
-              fontSize="sm"
-            >
-              Voir le projet
-              <Icon as={BiLinkExternal} />
-            </Link>
-          )}
+            {work.caseStudy ? (
+              // Étude de cas (PO, "la modale répète exactement le même texte
+              // que la carte") : contexte/défi/résultat, en plus de la
+              // description courte déjà affichée sur la carte. Seuls
+              // Becquet!/CoreWeb/Assisteo Agny/Tikou l'ont pour l'instant
+              // (faits confirmés par le PO) ; les autres projets gardent la
+              // description seule.
+              <Stack spacing={3} width="100%">
+                <Box>
+                  <Text
+                    as="h3"
+                    textStyle="label"
+                    color="accent.default"
+                    fontSize="xs"
+                    marginBottom={0.5}
+                  >
+                    Contexte
+                  </Text>
+                  <Text variant="description" fontSize="sm">
+                    {work.caseStudy.context}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text
+                    as="h3"
+                    textStyle="label"
+                    color="accent.default"
+                    fontSize="xs"
+                    marginBottom={0.5}
+                  >
+                    Le défi
+                  </Text>
+                  <Text variant="description" fontSize="sm">
+                    {work.caseStudy.challenge}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text
+                    as="h3"
+                    textStyle="label"
+                    color="accent.default"
+                    fontSize="xs"
+                    marginBottom={0.5}
+                  >
+                    Résultat
+                  </Text>
+                  <Text variant="description" fontSize="sm">
+                    {work.caseStudy.result}
+                  </Text>
+                </Box>
+              </Stack>
+            ) : (
+              <Text variant="description" textStyle="body">
+                {work.description}
+              </Text>
+            )}
+            {showProjectLink && (
+              <Link
+                href={work.ctaUrl}
+                target="_blank"
+                rel="noreferrer"
+                display="inline-flex"
+                alignItems="center"
+                justifyContent={{ base: 'center', md: 'flex-start' }}
+                gap={1}
+                fontSize="sm"
+              >
+                Voir le projet
+                <Icon as={BiLinkExternal} />
+              </Link>
+            )}
+          </Stack>
         </ModalBody>
       </ModalContent>
     </Modal>
