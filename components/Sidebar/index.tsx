@@ -30,6 +30,7 @@ import { getTypewriterDurationMs } from 'hooks/useTypewriterLines'
 const FIRST_NAME = 'Mahery'
 const LAST_NAME = 'RAKOTONINDRINA'
 const ROLE = 'Développeur Frontend'
+const CV_FILE_PATH = '/cv/Mahery-Rakotonindrina-CV.pdf'
 
 const BOOT_LINES = [
   '> INITIALISATION DEVELOPER.EXE',
@@ -196,22 +197,44 @@ const Sidebar = () => {
             que vous avez sous les yeux.
             <br />
           </MotionText>
-          <MotionButton
-            size="lg"
-            variant="outline"
-            borderWidth="1px"
-            borderRadius="0"
-            fontWeight="normal"
-            fontSize="sm"
-            width="160px"
+          <MotionBox
+            display="flex"
+            flexWrap="wrap"
+            gap={4}
             variants={itemVariants}
-            whileHover={hoverLiftTarget}
-            as={'a'}
-            href="mailto:maeryrakotonindrina17@gmail.com"
-            target="_blank"
           >
-            Entrons en contact!
-          </MotionButton>
+            <MotionButton
+              size="lg"
+              variant="outline"
+              borderWidth="1px"
+              borderRadius="0"
+              fontWeight="normal"
+              fontSize="sm"
+              width="160px"
+              whileHover={hoverLiftTarget}
+              as={'a'}
+              href="mailto:maeryrakotonindrina17@gmail.com"
+              target="_blank"
+            >
+              Entrons en contact!
+            </MotionButton>
+            <MotionButton
+              size="lg"
+              variant="ghost"
+              borderWidth="1px"
+              borderColor="border.subtle"
+              borderRadius="0"
+              fontWeight="normal"
+              fontSize="sm"
+              width="160px"
+              whileHover={hoverLiftTarget}
+              as={'a'}
+              href={CV_FILE_PATH}
+              download
+            >
+              Télécharger mon CV
+            </MotionButton>
+          </MotionBox>
 
           <MotionBox display="flex" gap={4} variants={itemVariants}>
             {SocialMedias.map((socMedia) => (
