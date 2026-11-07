@@ -52,6 +52,15 @@ const emailVariants: Variants = {
   },
 }
 
+// Bugfix (PO, capture à l'appui) : ce widget passait PAR-DESSUS la photo
+// (Avatar/index.tsx, `position: sticky` dans la section À propos) quand les
+// deux se trouvaient à l'écran en même temps — ni l'un ni l'autre n'avait de
+// `zIndex` explicite, donc l'empilement dépendait juste de l'ordre dans le
+// DOM (pages/index.tsx monte `<ScrollMore />` après la grille principale, il
+// peignait donc par-dessus). Plutôt que retirer ce widget (le PO préfère le
+// garder), `zIndex` explicite ici (`Avatar/index.tsx` passe à une valeur plus
+// haute) : la photo passe maintenant devant, le texte vertical disparaît
+// derrière elle au lieu de s'imprimer sur le visage/la cravate.
 const ScrollMore = () => {
   const isMobile = useBreakpointValue(mobileBreakpointsMap)
   const scrollDirection = useScrollDirection(false, isMobile)
@@ -63,6 +72,7 @@ const ScrollMore = () => {
       position="fixed"
       bottom="1em"
       right="3%"
+      zIndex={1}
       display={isMobile ? 'none' : 'block'}
     >
       <AnimatePresence>

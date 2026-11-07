@@ -28,7 +28,16 @@ yarn-error.log*
 .env.local
 .env.development.local
 .env.test.local
+
+# captures d'écran de vérification (QA interne, non versionnées)
+/screenshots/
+
+# artefact de compilation TypeScript incrémentale
+tsconfig.tsbuildinfo
 .env.production.local
 
 # vercel
 .vercel
+
+# playwright MCP debug output
+.playwright-mcp/

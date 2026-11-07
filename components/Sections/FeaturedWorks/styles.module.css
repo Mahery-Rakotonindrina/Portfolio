@@ -1,14 +1,66 @@
-
-.featureCard{
-    position: relative;
-    margin: auto;
-    overflow: hidden;
-    border-radius: 0.80em;
-
+/* US-018 — galerie horizontale pilotée par le scroll.
+ * Base (sans JS, tout breakpoint) : rangée flex avec scroll-snap natif —
+ * c'est littéralement l'expérience mobile/tactile finale (swipe natif, pas
+ * de scroll-jacking) et aussi la mise en page de secours avant que l'effet
+ * GSAP (ProjectGallery.tsx, client-only) ne monte sur desktop. Le pin+scrub
+ * GSAP ne fait que surcharger `overflow`/`transform` en inline (JS) une fois
+ * monté sur desktop — rien ici ne dépend du JS pour fonctionner.
+ */
+.wrapper {
+  position: relative;
+  width: 100%;
 }
-/* .featureCard img{
-    transition: all 0.1s ease-in-out;
+
+.track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.25rem 0.25rem 1.5rem;
 }
-.featureCard:hover img{
-    transform: scale(1.1);
-} */
+
+/* Largeur de carte = largeur réelle du conteneur (pas un px fixe) : sur une
+ * largeur intermédiaire (ex. ~899px), le conteneur est souvent bien plus
+ * large qu'une carte à largeur fixe, donc centrer une carte dans tout cet
+ * espace laissait déborder les cartes voisines, coupées en plein milieu de
+ * leur contenu (bug remonté par le PO, US-018 post-fix). `flex: 0 0 100%`
+ * garantit qu'une seule carte occupe tout le conteneur à n'importe quelle
+ * largeur sous le breakpoint desktop (`xl`, voir ProjectGallery.tsx) ;
+ * `scroll-snap-align: start` plutôt que `center` pour un alignement net dès
+ * la première/dernière carte (avec une carte de la largeur exacte du
+ * conteneur, `start`/`center` sont équivalents en régime normal, mais
+ * `start` évite tout souci d'arrondi aux bords de la plage de scroll).
+ */
+.track > * {
+  flex: 0 0 100%;
+  max-width: 100%;
+  scroll-snap-align: start;
+}
+
+/* Filet de sécurité prefers-reduced-motion (critère d'acceptation US-018) :
+ * retour intégral à la grille statique 2x2 d'US-006, même structure DOM,
+ * seulement la présentation visuelle change — aucune dépendance JS/React,
+ * s'applique dès le tout premier paint, aucun risque de mismatch
+ * d'hydratation. Mêmes seuils que l'ancienne SimpleGrid (`base: 1, md: 2`).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding: 0;
+  }
+
+  .track > * {
+    flex: initial;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 48em) {
+  .track {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,100 +1,82 @@
-/* eslint-disable react/no-multi-comp */
 import {
-  Heading,
+  Text,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  List,
-  ListItem,
-  ListIcon,
-  SimpleGrid,
   useColorModeValue,
-  Divider,
 } from '@chakra-ui/react'
+import { useReducedMotion } from 'framer-motion'
 import styles from './styles.module.css'
-import { Skill, Skills, splitSkills } from 'config/skills'
+import SkillsRelationMap from './SkillsRelationMap'
+import { modalEnter, modalEnterReduced } from 'config/animations'
+import useLenisLock from 'hooks/useLenisLock'
 
 type ISkillSetModal = {
   isOpen: boolean
   onClose(): void
 }
 
-const SkillList = ({
-  title,
-  columns,
-}: {
-  title: string
-  columns: Skill[][]
-}) => {
-  const emphasis = useColorModeValue('teal.500', 'cyan.200')
-  const [colOne, colTwo = []] = columns
-  return (
-    <>
-      <Heading as="div" size="sm" paddingBottom={1} variant="description">
-        {title}
-      </Heading>
-      <Divider marginBottom={4} />
-      <SimpleGrid columns={2} spacing={4} paddingBottom={6}>
-        <List spacing={3}>
-          {colOne.map((item) => (
-            <ListItem
-              key={item.name}
-              fontSize="small"
-              display="flex"
-              alignItems="center"
-            >
-              <ListIcon as={item.icon} color={emphasis} fontSize="2em" />
-              {item.name}
-            </ListItem>
-          ))}
-        </List>
-        <List spacing={3}>
-          {colTwo.map((item) => (
-            <ListItem
-              key={item.name}
-              fontSize="small"
-              display="flex"
-              alignItems="center"
-            >
-              <ListIcon as={item.icon} color={emphasis} fontSize="2em" />
-              {item.name}
-            </ListItem>
-          ))}
-        </List>
-      </SimpleGrid>
-    </>
-  )
-}
+// US-016 — remplace l'ancienne petite Modal Chakra (listes de compétences,
+// US-004) par un overlay plein écran ("carte de relations", voir
+// DESIGN_PROPOSAL_V2 §4). Toujours la Modal Chakra en dessous (`size="full"`)
+// — tous les acquis d'accessibilité déjà validés (focus trap, fermeture
+// `Escape`, aria-* automatiques, retour de focus au déclencheur — US-004/
+// US-010) sont donc conservés sans rien réécrire : seul le contenu
+// (ModalBody) change, remplacé par <SkillsRelationMap />.
 const SkillSetModal = ({ isOpen, onClose }: ISkillSetModal) => {
-  const backendCols = splitSkills(Skills.backend)
-  const frontendCols = splitSkills(Skills.frontend)
-  const dataBaseCols = splitSkills(Skills.database)
-  const uiFrameWorkCols = splitSkills(Skills['ui frameworks'])
-  const productivityCols = splitSkills(Skills['productivity boost'])
-  const mobileCols = splitSkills(Skills.mobile)
-  const desktopCols = splitSkills(Skills.desktop)
+  const shouldReduceMotion = useReducedMotion()
+  // Fond flouté/obscurci demandé explicitement pour cet overlay plein écran
+  // (DESIGN_PROPOSAL_V2 §4) — un alpha par mode n'a pas d'équivalent dans les
+  // semantic tokens de config/theme.ts (qui ne couvrent que des couleurs
+  // pleines), d'où ce useColorModeValue ciblé plutôt qu'un nouveau token.
+  const overlayBg = useColorModeValue(
+    'rgba(237, 242, 247, 0.88)',
+    'rgba(11, 13, 18, 0.9)'
+  )
+
+  // Même bugfix que ProjectDetailModal.tsx (PO) — voir hooks/useLenisLock.ts.
+  useLenisLock(isOpen)
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      motionPreset="slideInBottom"
+      size="full"
       scrollBehavior="inside"
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Ensemble de mes compétences</ModalHeader>
+      <ModalContent
+        bg={overlayBg}
+        color="text.primary"
+        borderRadius={0}
+        display="flex"
+        flexDirection="column"
+        sx={{ backdropFilter: 'blur(16px)' }}
+        motionProps={{
+          initial: 'initial',
+          animate: 'animate',
+          exit: 'exit',
+          // modalEnter : fondu + léger zoom à l'ouverture (US-002), réduit à
+          // un simple fondu si prefers-reduced-motion.
+          variants: shouldReduceMotion ? modalEnterReduced : modalEnter,
+        }}
+      >
+        <ModalHeader>
+          <Text as="h2" textStyle="subtitle">
+            Ensemble de mes compétences
+          </Text>
+        </ModalHeader>
         <ModalCloseButton />
-        <ModalBody className={styles.skillModal}>
-          <SkillList title="Backend " columns={backendCols} />
-          <SkillList title="Frontend " columns={frontendCols} />
-          <SkillList title="Base de donnée" columns={dataBaseCols} />
-          <SkillList title="Ui Frameworks" columns={uiFrameWorkCols} />
-          <SkillList title="Mobile Development" columns={mobileCols} />
-          <SkillList title="Desktop App" columns={desktopCols} />
-          <SkillList title="Productivity boosts" columns={productivityCols} />
+        <ModalBody
+          className={styles.skillModal}
+          display="flex"
+          flexDirection="column"
+          flex="1"
+        >
+          <SkillsRelationMap />
         </ModalBody>
       </ModalContent>
     </Modal>
