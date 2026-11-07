@@ -127,6 +127,18 @@ export const WorksList: Work[] = [
       'Et si ton téléphone pouvait te dire ce qu’il y a sur une photo ? C’est l’idée derrière Assisteo Agny, mon assistant IA de poche : une seule base de code pour le web et Android (Next.js, Capacitor) qui scanne, classe, suit tes colis, tes dépenses et tes bénéfices, et transforme même un document en todo list. Supabase, Redis et PostgreSQL en coulisses.',
     src: '/works/assisteo-agny.webp',
     ctaUrl: 'https://assisteo-agny.vercel.app',
+    // Étude de cas ajoutée (PO, faits confirmés directement) : deux défis en
+    // parallèle (cross-platform + fiabilité de l'IA elle-même), confirmés par
+    // le PO ("tout"). Statut confirmé "utilisable/testé dès maintenant" —
+    // pas de prétendre que c'est fini (le CV dit "En cours").
+    caseStudy: {
+      context:
+        'Assisteo Agny est mon projet personnel en cours : un assistant IA de poche, pensé pour le web et Android depuis une seule base de code (Next.js, Capacitor).',
+      challenge:
+        'Deux défis en parallèle : faire tourner cette base de code nativement sur le web et sur Android (caméra, stockage, comportement propre à chaque plateforme), et faire fonctionner l’IA elle-même — scanner une photo et la classer correctement (aliment, document, véhicule, objet...) de façon fiable.',
+      result:
+        'Déjà utilisable et testé aujourd’hui, même si le développement continue — scan, suivi des colis, des dépenses et des bénéfices, todo lists générées depuis un document.',
+    },
   },
   {
     title: 'Tikou',
@@ -134,5 +146,16 @@ export const WorksList: Work[] = [
       'Conçu, développé et mis en ligne en solo : Tikou est la boutique en ligne d’une marque malgache d’artisanat en raphia et cuir. Next.js, TypeScript, Tailwind CSS — catalogue, panier, contact, bilingue FR/EN, et du vrai SEO. Pas une maquette : il tourne, avec de vrais visiteurs et de vraies commandes.',
     src: '/works/tikou.webp',
     ctaUrl: 'https://www.tikou-mdg.com',
+    // Étude de cas ajoutée (PO, confirmé directement) : le défi EST le solo
+    // de bout en bout pour un vrai client — pas d'autre angle technique à
+    // inventer, le PO l'a confirmé explicitement.
+    caseStudy: {
+      context:
+        'Tikou est la boutique en ligne d’une marque malgache d’artisanat en raphia et cuir — un vrai client, avec un vrai catalogue à mettre en ligne.',
+      challenge:
+        'Tout faire seul, de bout en bout : design, développement (Next.js, TypeScript, Tailwind CSS), déploiement, contenu bilingue FR/EN, et SEO — aucune étape déléguée à quelqu’un d’autre.',
+      result:
+        'Le site est en ligne sur tikou-mdg.com, avec de vrais visiteurs et de vraies commandes.',
+    },
   },
 ]
