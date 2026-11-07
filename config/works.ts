@@ -26,17 +26,28 @@ export const WorksList: Work[] = [
     // besoin d'`objectPosition` pour recadrer. `ctaUrl` pointe maintenant
     // vers le vrai site (becquet.fr), plus vers l'image elle-même.
     //
-    // Description réécrite (PO) : Becquet n'est pas un site isolé mais l'une
-    // des enseignes d'un socle multi-marques chez Domoti ("CoreWeb") —
-    // confirmé par le PO : TempsL, Idées Homme, Chien Chat et Compagnie,
-    // Confort et Vie, Marianne Mélodie et L'Atelier de Lucie tournent sur la
-    // même base de code et la même stack. Domaines vérifiés réellement en
-    // ligne un par un avant d'écrire cette description (pas de nom pris sur
-    // la seule parole du PO sans le confirmer).
+    // Correction (PO) : contrairement à une première hypothèse, Becquet
+    // tourne sur SON PROPRE code — pas la même base que CoreWeb (entrée
+    // séparée ci-dessous). Description revenue à un projet autonome, mission
+    // via Domoti/Vivetic conservée (confirmée séparément par le PO).
     description:
-      'Becquet n’est qu’une des enseignes d’un chantier bien plus large chez Domoti : CoreWeb, une base de code unique qui fait tourner plusieurs sites e-commerce bien distincts — TempsL, Idées Homme, Chien Chat et Compagnie, Confort et Vie, Marianne Mélodie, L’Atelier de Lucie, et Becquet lui-même. Même stack partout : Next.js en façade, .NET/C# en coulisses, WCF, GraphQL, et des procédures stockées à apprivoiser.',
+      'Le plus gros chantier technique de mon parcours jusqu’ici, réalisé en mission via Domoti/Vivetic. Sur ce site e-commerce, j’ai dû faire tenir ensemble un Next.js en façade et tout un monde .NET/C# en coulisses — WCF, GraphQL, et des procédures stockées qu’il a fallu apprivoiser pour que l’ensemble tienne la route.',
     src: '/works/becquet.webp',
     ctaUrl: 'https://www.becquet.fr',
+  },
+  {
+    title: 'CoreWeb',
+    // Entrée ajoutée (PO) : à distinguer de Becquet! ci-dessus (code séparé,
+    // cf. correction PO). CoreWeb est le socle multi-marques de Domoti —
+    // chaque domaine listé vérifié réellement en ligne (tempsl.fr,
+    // ideeshomme.fr, chienchatetcompagnie.fr confirmés par navigation directe
+    // avant d'écrire cette description ; les 3 autres pris sur la parole du
+    // PO, schéma cohérent avec les précédents). Image : capture réelle de
+    // tempsl.fr (catégorie "Cuisson et accessoires", hors bandeau promo).
+    description:
+      'CoreWeb est un autre chantier chez Domoti, cette fois multi-marques : une base de code à part entière qui fait tourner plusieurs enseignes e-commerce bien distinctes — TempsL, Idées Homme, Chien Chat et Compagnie, Confort et Vie, Marianne Mélodie, L’Atelier de Lucie. Même stack que Becquet (Next.js, .NET/C#, WCF, GraphQL, procédures stockées), mais un code qui lui est propre.',
+    src: '/works/coreweb.webp',
+    ctaUrl: 'https://www.tempsl.fr',
   },
   {
     title: 'GIPROD Androy',
