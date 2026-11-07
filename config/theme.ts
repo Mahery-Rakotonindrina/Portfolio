@@ -218,6 +218,25 @@ const theme = extendTheme({
             backgroundColor: 'accent.subtle',
           },
         }),
+        // CTA primaire plein accent — jusqu'ici aucun bouton de l'app n'avait
+        // besoin de porter l'accent en fond (seulement en bordure/texte).
+        // `color` inversé par mode : `accent.default` est clair en dark
+        // (accent.400, bleu lumineux) et sombre en light (accent.600, bleu
+        // profond) — le texte doit toujours aller dans l'autre sens pour
+        // rester lisible (ratios : ~9:1 texte quasi-noir sur accent.400,
+        // ~7:1 texte blanc sur accent.600 — voir .claude/memory/designer.md).
+        accent: (props: StyleFunctionProps) => ({
+          bg: 'accent.default',
+          color: mode('white', 'night.900')(props),
+          borderRadius: 0,
+          transition: 'opacity 0.2s',
+          _hover: {
+            opacity: 0.88,
+          },
+          _active: {
+            opacity: 0.78,
+          },
+        }),
       },
     },
     Icon: {

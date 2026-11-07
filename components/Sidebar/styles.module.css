@@ -36,6 +36,9 @@
 .marginTopSmall{
   margin-top: 12px !important;
 }
+.marginTopGroup{
+  margin-top: 32px !important;
+}
 .perspectiveGrid{
   position: absolute;
   inset: 0;

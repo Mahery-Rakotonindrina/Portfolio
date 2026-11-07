@@ -121,19 +121,24 @@ const Sidebar = () => {
         display={{ xl: 'flex' }}
         alignItems={{ xl: 'center' }}
       >
-        <MotionStack variants={parentVariants} spacing={6} w="100%">
+        <MotionStack variants={parentVariants} spacing={4} w="100%">
           <BootLog
             lines={BOOT_LINES}
             reduced={Boolean(shouldReduceMotion)}
             visible={bootLogVisible}
           />
+          {/* Tier 1 — IDENTITÉ : le salut n'est plus qu'une petite ligne de
+              politesse (tout le poids visuel va au nom, en dessous), la
+              gratitude de l'ancien paragraphe est remontée ici en une phrase
+              courte plutôt que diluée au milieu du texte (refonte Hero,
+              2026-11-07 — cf. .claude/memory/designer.md). */}
           <MotionText
             variants={itemVariants}
-            variant="accent"
-            fontWeight="light"
+            color="text.tertiary"
+            fontWeight="normal"
             fontSize="sm"
           >
-            Hey, bienvenu sur mon petit coin du Web! Moi c’est
+            Hey, merci d’être passé par ici 👋
           </MotionText>
           <MotionText
             as="h3"
@@ -166,61 +171,73 @@ const Sidebar = () => {
           >
             {scrambledLastName}
           </MotionText>
+          {/* Rôle + disponibilité + langues fusionnés en une seule ligne
+              "readout" HUD (mono, discrète) plutôt que deux lignes de poids
+              égal — seul le rôle garde l'accent, le reste reste tertiaire.
+              Pas une heading : c'est une méta-info, pas une structure de
+              page (le nom porte déjà les h3/h4 ci-dessus). */}
           <MotionText
-            as="h3"
             textStyle="label"
-            color="accent.default"
+            color="text.tertiary"
             className={styles.marginTopSmall}
             variants={itemVariants}
           >
-            {ROLE}
-          </MotionText>
-          {/* Infos pratiques réelles du CV (disponibilité remote + langues),
-              invisibles jusqu'ici sur le site alors que ce sont des critères
-              de recherche fréquents côté recruteur — jamais affichées nulle
-              part ailleurs sur la page. */}
-          <MotionText
-            as="span"
-            textStyle="label"
-            color="text.tertiary"
-            fontSize="xs"
-            variants={itemVariants}
-          >
-            Remote (UTC+3) · FR · EN · MG
+            <Text as="span" color="accent.default">
+              {ROLE}
+            </Text>
+            {' · Remote (UTC+3) · FR / EN / MG'}
           </MotionText>
 
+          {/* Repère HUD purement décoratif : marque la bascule "identité" →
+              "pitch", dans le même esprit que la grille/les labels mono déjà
+              posés ailleurs sur ce composant — pas une ligne grise générique. */}
+          <MotionBox
+            aria-hidden="true"
+            width="32px"
+            height="2px"
+            bg="accent.default"
+            className={styles.marginTopGroup}
+            variants={itemVariants}
+          />
+
+          {/* Tier 2 — PITCH : une accroche forte et unique (l'ancienne 3e
+              phrase du paragraphe, élevée au rang de point d'entrée) suivie
+              d'une seule ligne de contexte secondaire — plus de mur de texte
+              à trois phrases égales. */}
+          <MotionText
+            fontSize={{ base: 'lg', md: 'xl' }}
+            lineHeight="short"
+            fontWeight="medium"
+            maxWidth={{ base: '100%', lg: '90%' }}
+            variants={itemVariants}
+          >
+            Prendre un problème compliqué et le rendre simple à l’écran · voilà
+            ce qui me fait vibrer.
+          </MotionText>
           <MotionText
             variant="description"
             textStyle="body"
+            fontSize="sm"
+            className={styles.marginTopSmall}
             paddingRight={{ lg: '12' }}
-            variants={itemVariants}
             maxWidth={{ base: '100%', lg: '80%' }}
+            variants={itemVariants}
           >
-            Oh, quelle bonne surprise de vous voir ici,
-            <Text variant="emphasis" as="span">
-              {' '}
-              Merci beaucoup !
-            </Text>
-            <br />
-            Développeur web depuis l’enfance — la passion n’a jamais vraiment
-            calmé.
-            <br /> <br />
-            Ce qui me fait vibrer ? Prendre un problème qui a l’air compliqué et
-            le rendre simple, du moteur qui tourne en coulisses jusqu’à l’écran
-            que vous avez sous les yeux.
-            <br />
+            React & Next.js au quotidien, avec un vrai goût du détail.
           </MotionText>
+
+          {/* Tier 3 — ACTION : un seul CTA domine (contact, en accent plein),
+              le second (CV) reste volontairement en retrait. */}
           <MotionBox
             display="flex"
             flexWrap="wrap"
             gap={4}
+            className={styles.marginTopGroup}
             variants={itemVariants}
           >
             <MotionButton
               size="lg"
-              variant="outline"
-              borderWidth="1px"
-              borderRadius="0"
+              variant="accent"
               fontWeight="normal"
               fontSize="sm"
               width="160px"
@@ -233,10 +250,7 @@ const Sidebar = () => {
             </MotionButton>
             <MotionButton
               size="lg"
-              variant="ghost"
-              borderWidth="1px"
-              borderColor="border.subtle"
-              borderRadius="0"
+              variant="outlineAlternative"
               fontWeight="normal"
               fontSize="sm"
               width="160px"
@@ -249,7 +263,16 @@ const Sidebar = () => {
             </MotionButton>
           </MotionBox>
 
-          <MotionBox display="flex" gap={4} variants={itemVariants}>
+          {/* Tier 4 — CANAUX secondaires : filet supérieur discret pour
+              signaler "en plus, pas en concurrence" avec le CTA ci-dessus. */}
+          <MotionBox
+            display="flex"
+            gap={4}
+            borderTop="1px solid"
+            borderColor="border.subtle"
+            paddingTop={4}
+            variants={itemVariants}
+          >
             {SocialMedias.map((socMedia) => (
               <SocialIcon
                 key={socMedia.label}
