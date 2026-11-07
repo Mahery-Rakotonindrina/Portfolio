@@ -19,14 +19,16 @@ export type Work = {
 export const WorksList: Work[] = [
   {
     title: 'Becquet!',
+    // Image corrigée (PO) : l'ancienne était une miniature Google basse
+    // résolution de ce qui n'était même pas un vrai logo officiel. Remplacée
+    // par une vraie capture du site en ligne (becquet.fr, catégorie "Linge de
+    // lit", hors bandeau promo saisonnier) — exactement 1600x1000, donc pas
+    // besoin d'`objectPosition` pour recadrer. `ctaUrl` pointe maintenant
+    // vers le vrai site (becquet.fr), plus vers l'image elle-même.
     description:
-      'Le plus gros chantier technique de mon parcours jusqu’ici. Sur ce site e-commerce, j’ai dû faire tenir ensemble un Next.js en façade et tout un monde .NET/C# en coulisses — WCF, GraphQL, et des procédures stockées qu’il a fallu apprivoiser pour que l’ensemble tienne la route.',
-    src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDISAczkXoOFk4kQLgIKPB9pz4VeeWGUZaLQ&s',
-    // Pointe vers l'image elle-même, pas un vrai site : aucun lien "voir le
-    // projet" ne doit s'afficher pour cette entrée (bug identifié US-001).
-    ctaUrl:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDISAczkXoOFk4kQLgIKPB9pz4VeeWGUZaLQ&s',
-    objectPosition: 'right 20%',
+      'Le plus gros chantier technique de mon parcours jusqu’ici, réalisé en mission via Domoti/Vivetic. Sur ce site e-commerce, j’ai dû faire tenir ensemble un Next.js en façade et tout un monde .NET/C# en coulisses — WCF, GraphQL, et des procédures stockées qu’il a fallu apprivoiser pour que l’ensemble tienne la route.',
+    src: '/works/becquet.webp',
+    ctaUrl: 'https://www.becquet.fr',
   },
   {
     title: 'GIPROD Androy',
