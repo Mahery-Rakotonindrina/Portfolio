@@ -151,8 +151,7 @@ const Detail = ({ onOpen }: IDetail) => {
             <Text variant="description" textStyle="body">
               Cela fait maintenant {professionalYears} ans que je code{' '}
               professionnellement, avec une spécialisation en <b>Frontend</b>{' '}
-              notamment en React et Next.js. J&apos;interviens principalement
-              sur{' '}
+              notamment en React et Next.js. Mon terrain de jeu :{' '}
               <b>la conception d&apos;interfaces modernes et performantes</b>,{' '}
               <b>
                 l&apos;architecture front-end, l&apos;intégration d&apos;APIs

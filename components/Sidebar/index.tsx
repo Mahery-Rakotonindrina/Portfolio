@@ -188,10 +188,12 @@ const Sidebar = () => {
               Merci beaucoup !
             </Text>
             <br />
-            Je suis un développeur web passionné depuis l’enfance.
+            Développeur web depuis l’enfance — la passion n’a jamais vraiment
+            calmé.
             <br /> <br />
-            Ce que j’aime ? Transformer des idées complexes en solutions simples
-            et efficaces, du back-end solide aux interfaces intuitives.
+            Ce qui me fait vibrer ? Prendre un problème qui a l’air compliqué et
+            le rendre simple, du moteur qui tourne en coulisses jusqu’à l’écran
+            que vous avez sous les yeux.
             <br />
           </MotionText>
           <MotionButton
