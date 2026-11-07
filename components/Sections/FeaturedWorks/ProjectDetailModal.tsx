@@ -10,6 +10,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  Stack,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
@@ -36,8 +37,12 @@ const MotionImage = motion(Image)
 // `layoutId` avec la vignette cliquée (FeaturedCard.tsx) pour un vrai morph
 // FLIP piloté par Framer Motion ; désactivé sous prefers-reduced-motion
 // (simple fondu via modalEnterReduced, comme SkillSetModal). Le titre et la
-// description affichés sont EXACTEMENT ceux de `config/works.ts` (aucun mot
-// inventé) — déjà le texte complet, pas un extrait tronqué ailleurs.
+// description/étude de cas affichés sont EXACTEMENT ceux de
+// `config/works.ts` (aucun mot inventé) — déjà le texte complet, pas un
+// extrait tronqué ailleurs. `work.caseStudy`, quand présent (PO, "la modale
+// répète exactement le même texte que la carte"), remplace la description
+// courte par une vraie étude de cas (contexte/défi/résultat) — sinon la
+// carte et la modale restent volontairement identiques, comme avant.
 const ProjectDetailModal = ({
   work,
   imageLayoutId,
@@ -103,9 +108,59 @@ const ProjectDetailModal = ({
           <Text as="h2" textStyle="title" textAlign="center">
             {work.title}
           </Text>
-          <Text variant="description" textStyle="body" textAlign="center">
-            {work.description}
-          </Text>
+          {work.caseStudy ? (
+            // Étude de cas (PO, "la modale répète exactement le même texte
+            // que la carte") : contexte/défi/résultat, en plus de la
+            // description courte déjà affichée sur la carte — alignée à
+            // gauche (se lit mieux sur un texte plus long que centré).
+            // Seuls Becquet!/CoreWeb l'ont pour l'instant (faits confirmés
+            // par le PO) ; les autres projets gardent la description seule.
+            <Stack spacing={5} width="100%" textAlign="left">
+              <Box>
+                <Text
+                  as="h3"
+                  textStyle="label"
+                  color="accent.default"
+                  marginBottom={1}
+                >
+                  Contexte
+                </Text>
+                <Text variant="description" textStyle="body">
+                  {work.caseStudy.context}
+                </Text>
+              </Box>
+              <Box>
+                <Text
+                  as="h3"
+                  textStyle="label"
+                  color="accent.default"
+                  marginBottom={1}
+                >
+                  Le défi
+                </Text>
+                <Text variant="description" textStyle="body">
+                  {work.caseStudy.challenge}
+                </Text>
+              </Box>
+              <Box>
+                <Text
+                  as="h3"
+                  textStyle="label"
+                  color="accent.default"
+                  marginBottom={1}
+                >
+                  Résultat
+                </Text>
+                <Text variant="description" textStyle="body">
+                  {work.caseStudy.result}
+                </Text>
+              </Box>
+            </Stack>
+          ) : (
+            <Text variant="description" textStyle="body" textAlign="center">
+              {work.description}
+            </Text>
+          )}
           {showProjectLink && (
             <Link
               href={work.ctaUrl}

@@ -9,6 +9,18 @@ export type Work = {
   // corriger artificiellement.
   ctaUrl?: string
   objectPosition?: string
+  // Optionnel : étude de cas affichée dans la modale de détail
+  // (ProjectDetailModal), en plus de `description` (toujours utilisée telle
+  // quelle sur la carte — volontairement courte). Seulement rempli quand le
+  // PO a confirmé des faits allant au-delà de `description` (demande
+  // explicite du PO, "la modale répète exactement le même texte que la
+  // carte") — pas de contexte/défi/résultat inventé pour les projets où on
+  // n'a que la description courte.
+  caseStudy?: {
+    context: string
+    challenge: string
+    result: string
+  }
 }
 
 // Textes et URLs copiés tels quels depuis l'ancien composant (aucune
@@ -34,6 +46,19 @@ export const WorksList: Work[] = [
       'Le plus gros chantier technique de mon parcours jusqu’ici, réalisé en mission via Domoti/Vivetic. Sur ce site e-commerce, j’ai dû faire tenir ensemble un Next.js en façade et tout un monde .NET/C# en coulisses — WCF, GraphQL, et des procédures stockées qu’il a fallu apprivoiser pour que l’ensemble tienne la route.',
     src: '/works/becquet.webp',
     ctaUrl: 'https://www.becquet.fr',
+    // Étude de cas ajoutée (PO, faits confirmés directement) : le défi réel
+    // ne se limitait pas à WCF/GraphQL/procédures stockées, il incluait aussi
+    // des montées en version de Next.js en cours de route. Pas de chiffre
+    // (trafic, durée...) fourni par le PO au-delà de "toujours en prod
+    // aujourd'hui" — rien d'autre inventé.
+    caseStudy: {
+      context:
+        'Becquet est un site e-commerce français bien réel (becquet.fr), sur lequel je suis intervenu en mission via Domoti/Vivetic : un front Next.js branché sur un système existant en .NET/C#.',
+      challenge:
+        'Le vrai casse-tête : faire dialoguer ce front moderne avec la logique métier .NET déjà en place — WCF, GraphQL, et des procédures stockées à apprivoiser — tout en migrant Next.js vers des versions plus récentes en cours de route, sans casser ce qui tournait déjà en production.',
+      result:
+        'Le site tourne toujours en production aujourd’hui sur becquet.fr.',
+    },
   },
   {
     title: 'CoreWeb',
@@ -48,6 +73,18 @@ export const WorksList: Work[] = [
       'CoreWeb est un autre chantier chez Domoti, cette fois multi-marques : une base de code à part entière qui fait tourner plusieurs enseignes e-commerce bien distinctes — TempsL, Idées Homme, Chien Chat et Compagnie, Confort et Vie, Marianne Mélodie, L’Atelier de Lucie. Même stack que Becquet (Next.js, .NET/C#, WCF, GraphQL, procédures stockées), mais un code qui lui est propre.',
     src: '/works/coreweb.webp',
     ctaUrl: 'https://www.tempsl.fr',
+    // Étude de cas ajoutée (PO, faits confirmés directement) : le mécanisme
+    // multi-marques (thème/config par enseigne) et le compte de 6 enseignes
+    // sur une même base de code — rien au-delà de ce que le PO a confirmé
+    // (pas de détail d'implémentation inventé : build par marque ?
+    // multi-tenant runtime ? non précisé, donc non affirmé).
+    caseStudy: {
+      context:
+        'CoreWeb est la plateforme multi-marques de Domoti, sur une base de code à part entière (même stack que Becquet, projet séparé).',
+      challenge:
+        'Un seul code sert 6 enseignes bien distinctes — TempsL, Idées Homme, Chien Chat et Compagnie, Confort et Vie, Marianne Mélodie, L’Atelier de Lucie — grâce à un système de thème/configuration par marque : couleurs, logo et contenu changent selon le domaine, sur le même socle technique.',
+      result: 'Les 6 sites tournent toujours en production aujourd’hui.',
+    },
   },
   {
     title: 'GIPROD Androy',
