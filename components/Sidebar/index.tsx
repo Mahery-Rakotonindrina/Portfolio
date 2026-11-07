@@ -184,6 +184,43 @@ const Sidebar = () => {
             {ROLE}
           </MotionText>
 
+          {/* Badge de disponibilité (PO, confirmé en recherche active) —
+              neutre à dessein : ne restreint plus à "remote" uniquement
+              (contrairement à l'ancienne ligne retirée ci-dessus). Un pastille
+              + texte plutôt qu'une simple ligne de plus : signale un statut,
+              pas une méta-info parmi d'autres. */}
+          <MotionBox
+            display="inline-flex"
+            alignItems="center"
+            gap={2}
+            width="fit-content"
+            className={styles.marginTopSmall}
+            paddingX={3}
+            paddingY={1}
+            borderWidth="1px"
+            borderColor="border.subtle"
+            borderRadius="full"
+            variants={itemVariants}
+          >
+            <Box
+              as="span"
+              aria-hidden="true"
+              width="6px"
+              height="6px"
+              borderRadius="full"
+              bg="accent.default"
+              flexShrink={0}
+            />
+            <Text
+              as="span"
+              textStyle="label"
+              color="text.tertiary"
+              fontSize="xs"
+            >
+              Ouvert à de nouvelles opportunités
+            </Text>
+          </MotionBox>
+
           {/* Repère HUD purement décoratif : marque la bascule "identité" →
               "pitch", dans le même esprit que la grille/les labels mono déjà
               posés ailleurs sur ce composant — pas une ligne grise générique. */}
