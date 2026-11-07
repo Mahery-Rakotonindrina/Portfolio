@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { Box, useDisclosure } from '@chakra-ui/react'
 import { useReducedMotion } from 'framer-motion'
 import gsap from 'gsap'
+import { Draggable } from 'gsap/Draggable'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import FeaturedCard, { isExternalProjectLink } from './FeaturedCard'
 import ProjectDetailModal from './ProjectDetailModal'
@@ -10,6 +11,12 @@ import { Work } from 'config/works'
 
 export type ProjectGalleryProps = {
   works: Work[]
+  // Conteneur englobant titre + description + galerie (FeaturedWorks/
+  // index.tsx) — c'est LUI qui est pinné en entier par l'effet ci-dessous
+  // (bugfix titre/texte qui défilaient hors écran pendant le scrub), pas
+  // seulement `wrapper`. `wrapper`/`track` restent la seule source des
+  // mesures de distance de scrub (getScrollDistance), inchangé.
+  pinContainerRef: RefObject<HTMLDivElement>
 }
 
 type Selection = { work: Work; imageLayoutId: string }
@@ -28,7 +35,7 @@ const DESKTOP_QUERY = '(min-width: 80em)'
 // `next/dynamic(ssr:false)` sur ce composant : le texte réel reste présent
 // dans le HTML généré côté serveur, seule la mécanique de scroll est une
 // amélioration progressive ajoutée après hydratation.
-const ProjectGallery = ({ works }: ProjectGalleryProps) => {
+const ProjectGallery = ({ works, pinContainerRef }: ProjectGalleryProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = Boolean(useReducedMotion())
@@ -60,7 +67,8 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
 
     const wrapper = wrapperRef.current
     const track = trackRef.current
-    if (!wrapper || !track) {
+    const pinContainer = pinContainerRef.current
+    if (!wrapper || !track || !pinContainer) {
       return undefined
     }
 
@@ -68,7 +76,7 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
     // l'ordre de montage par rapport à SmoothScrollProvider (les effets des
     // descendants s'exécutent avant ceux des ancêtres), donc pas de
     // supposition implicite sur ce composant distant.
-    gsap.registerPlugin(ScrollTrigger)
+    gsap.registerPlugin(ScrollTrigger, Draggable)
 
     // Bugfix (remonté par le PO, "parfois ça ne s'affiche pas") — 2e passe.
     // `ScrollTrigger` ne se réévalue nativement que sur
@@ -134,21 +142,26 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
         x: () => -getScrollDistance(),
         ease: 'none',
         scrollTrigger: {
-          trigger: wrapper,
+          // Bugfix (titre + description qui défilaient hors écran avant la
+          // fin du scrub) : le pin cible désormais `pinContainer` (titre +
+          // description + `wrapper`, voir FeaturedWorks/index.tsx) et non
+          // plus seulement `wrapper` — tout le bloc reste fixe à l'écran
+          // pendant tout le défilement horizontal, pas seulement la galerie.
+          // `start`/`end`/`getScrollDistance()` restent basés sur les
+          // largeurs de `track`/`wrapper` (inchangé) : seul l'élément pinné
+          // change, pas la distance de scrub elle-même.
+          trigger: pinContainer,
           start: 'top top',
           end: () => `+=${getScrollDistance()}`,
           scrub: true,
           pin: true,
-          // Piège trouvé en vérification : GSAP désactive silencieusement
-          // `pinSpacing` par défaut dès que le parent de l'élément pinné est
-          // `display: flex` (ScrollTrigger.js, commentaire explicite "if the
-          // parent is display: flex, don't apply pinSpacing by default") —
-          // notre cas exact, `wrapper` est un enfant direct du `Stack`
-          // Chakra (flex) de FeaturedWorksSection. Sans ce réglage explicite,
-          // le pin-spacer ne réserve AUCUN espace pour la durée du scrub : le
-          // pin s'engage brièvement (position devient bien `fixed`) puis la
-          // section suivante (Contact) remonte par-dessus avant la fin du
-          // défilement horizontal. `'padding'` = la valeur par défaut réelle
+          // Piège trouvé en vérification (US-018) : GSAP désactive
+          // silencieusement `pinSpacing` par défaut dès que le PARENT de
+          // l'élément pinné est `display: flex` (ScrollTrigger.js,
+          // commentaire explicite "if the parent is display: flex, don't
+          // apply pinSpacing by default") — toujours notre cas ici, le
+          // parent de `pinContainer` reste un `Stack` Chakra (flex) de
+          // FeaturedWorksSection. `'padding'` = la valeur par défaut réelle
           // de GSAP hors contexte flex (même ScrollTrigger.js, branche
           // ternaire par défaut) — on la force explicitement ici.
           pinSpacing: 'padding',
@@ -156,7 +169,50 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
         },
       })
 
+      // Drag souris horizontal (desktop) : la souris ne doit JAMAIS piloter
+      // `track.x` directement en parallèle du tween ci-dessus — les deux se
+      // disputeraient la position et désynchroniseraient dès le prochain
+      // scroll. Technique retenue (pattern GSAP documenté pour rendre une
+      // section pin+scrub draggable) : un `Draggable` est posé sur un proxy
+      // DOM détaché (jamais inséré dans la page, jamais rendu) plutôt que sur
+      // `track` lui-même — seul son delta de déplacement (`this.x`) est lu,
+      // pour piloter la position de scroll de la PAGE via
+      // `scrollTrigger.scroll(valeurEnPx)`. Le tween existant se charge alors
+      // de retraduire ce scroll en `x` sur `track`, exactement comme il le
+      // fait déjà pour un scroll/wheel normal — aucune désynchronisation
+      // possible avec un scroll qui suit.
+      const scrollTriggerInstance = tween.scrollTrigger
+      const dragProxy = document.createElement('div')
+      let dragStartScroll = 0
+      let dragStartX = 0
+
+      const draggables = Draggable.create(dragProxy, {
+        type: 'x',
+        trigger: wrapper,
+        // Un clic sur un élément naturellement cliquable (le bouton
+        // transparent "Voir le détail" de FeaturedCard, ou le lien "Voir le
+        // projet") doit continuer à ouvrir la modale normalement — pas être
+        // intercepté comme un petit drag. `dragClickables: false` fait
+        // explicitement sauter toute logique de drag quand la pression
+        // démarre sur un <button>/<a> (Draggable.js, test `isClickable`),
+        // laissant le clic natif se produire.
+        dragClickables: false,
+        // Affordance visuelle : curseur grab au repos, grabbing pendant le
+        // drag (ce sont déjà les valeurs par défaut de Draggable, explicites
+        // ici pour documenter l'intention).
+        cursor: 'grab',
+        activeCursor: 'grabbing',
+        onPress(this: Draggable) {
+          dragStartScroll = scrollTriggerInstance?.scroll() ?? 0
+          dragStartX = this.x
+        },
+        onDrag(this: Draggable) {
+          scrollTriggerInstance?.scroll(dragStartScroll - (this.x - dragStartX))
+        },
+      })
+
       return () => {
+        draggables.forEach((instance) => instance.kill())
         tween.scrollTrigger?.kill()
         tween.kill()
       }
@@ -169,7 +225,7 @@ const ProjectGallery = ({ works }: ProjectGalleryProps) => {
         window.clearTimeout(refreshTimeoutId)
       }
     }
-  }, [])
+  }, [pinContainerRef])
 
   const showProjectLink = selection
     ? isExternalProjectLink(selection.work.ctaUrl, selection.work.src)
