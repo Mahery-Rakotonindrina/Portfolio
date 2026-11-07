@@ -109,6 +109,14 @@ const Avatar = () => {
         // la nav avec une marge de sécurité raisonnable.
         position={{ base: 'static', xl: 'sticky' }}
         top={{ xl: '288px' }}
+        // Bugfix (PO, capture à l'appui) : sans zIndex explicite, l'ordre de
+        // peinture dépendait juste de la position dans le DOM — ScrollMore
+        // (monté après la grille principale, pages/index.tsx) passait par-
+        // dessus cette photo sticky dès que son widget email vertical
+        // apparaissait au même endroit à l'écran. zIndex=1 ici (ScrollMore
+        // passe lui-même à 1, cf. ce fichier) suffit à inverser l'ordre sans
+        // dépasser ProgressHUD (2-3) ni le Menu (100).
+        zIndex={2}
         initial="initial"
         animate="animate"
         variants={avatarAnimation}
