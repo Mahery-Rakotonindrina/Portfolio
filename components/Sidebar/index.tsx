@@ -171,21 +171,17 @@ const Sidebar = () => {
           >
             {scrambledLastName}
           </MotionText>
-          {/* Rôle + disponibilité + langues fusionnés en une seule ligne
-              "readout" HUD (mono, discrète) plutôt que deux lignes de poids
-              égal — seul le rôle garde l'accent, le reste reste tertiaire.
-              Pas une heading : c'est une méta-info, pas une structure de
-              page (le nom porte déjà les h3/h4 ci-dessus). */}
+          {/* Retiré (PO) : "Remote (UTC+3) · FR / EN / MG" laissait entendre
+              une recherche limitée au remote, alors qu'il vise toutes les
+              opportunités. Le rôle seul reste — pas une heading, une méta-
+              info (le nom porte déjà les h3/h4 ci-dessus). */}
           <MotionText
             textStyle="label"
-            color="text.tertiary"
+            color="accent.default"
             className={styles.marginTopSmall}
             variants={itemVariants}
           >
-            <Text as="span" color="accent.default">
-              {ROLE}
-            </Text>
-            {' · Remote (UTC+3) · FR / EN / MG'}
+            {ROLE}
           </MotionText>
 
           {/* Repère HUD purement décoratif : marque la bascule "identité" →
