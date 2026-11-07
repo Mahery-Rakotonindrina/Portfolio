@@ -20,7 +20,7 @@ export const WorksList: Work[] = [
   {
     title: 'Becquet!',
     description:
-      'Becquet est un site e-commerce développé avec Next.js pour le frontend et C# .NET côté backend. C’est l’un des projets les plus ambitieux sur lesquels j’ai travaillé : il a mobilisé un large éventail de compétences techniques, allant de Next.js, WCF, GraphQL, .NET, jusqu’à l’utilisation avancée de procédures stockées.',
+      'Le plus gros chantier technique de mon parcours jusqu’ici. Sur ce site e-commerce, j’ai dû faire tenir ensemble un Next.js en façade et tout un monde .NET/C# en coulisses — WCF, GraphQL, et des procédures stockées qu’il a fallu apprivoiser pour que l’ensemble tienne la route.',
     src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDISAczkXoOFk4kQLgIKPB9pz4VeeWGUZaLQ&s',
     // Pointe vers l'image elle-même, pas un vrai site : aucun lien "voir le
     // projet" ne doit s'afficher pour cette entrée (bug identifié US-001).
@@ -30,8 +30,12 @@ export const WorksList: Work[] = [
   },
   {
     title: 'GIPROD Androy',
+    // Corrigé pour coller au CV (source de vérité) : front-end React.js — pas
+    // Vue.js — et une application de recensement des habitants d'Androy, pas
+    // de gestion de ressources/territoires/membres. Le CV ne nomme aucun
+    // client ("Freelance" seul) : "Diapen'tech" retiré, invérifiable.
     description:
-      "En mission freelance chez Diapen'tech, j’ai développé une application de gestion des ressources, territoires, projets et membres, avec intégration de cartes interactives via ArcGIS. Les technos utilisées : Laravel 9 & Vue.js.",
+      'Recenser toute une région, ça ne s’improvise pas. GIPROD Androy est l’application que j’ai développée en mission freelance pour digitaliser le recensement des habitants d’Androy — React.js en façade, PHP/Laravel en coulisses, connectés via une API REST.',
     src: '/giprod.jpg',
     // Chemin local mal orthographié (pas une URL externe) : aucun lien à
     // afficher.
@@ -40,15 +44,20 @@ export const WorksList: Work[] = [
   {
     title: 'E-Kaly',
     description:
-      "Un de mes projets personnels en cours, lancé avec Symfony 5 en backend et Next.js en frontend. Initialement dédié à la gestion des commandes en restauration, il a évolué pour inclure la gestion des livreurs (disponibilité, affectation) et un système de contact direct entre restaurants et livreurs via le web. Je prévois également de développer une application mobile pour ce projet à l'avenir.",
+      'Ce qui devait être un simple outil de gestion des commandes pour un restaurant a pris de l’ampleur : E-Kaly gère aujourd’hui aussi les livreurs (disponibilité, affectation) et met en relation directe restaurants et livreurs depuis le web. Symfony 5 derrière, Next.js devant — et une version mobile dans les cartons.',
     src: '/works/agora.webp',
     ctaUrl: 'https://dev.agora-school.com',
     objectPosition: 'right 20%',
   },
   {
     title: 'GESCOM',
+    // Corrigé pour coller au CV : le stage était chez Manao Logiciels (pas
+    // "SIDINA (Groupe MANAO)"), pour une application de gestion des factures
+    // périodiques — pas une appli "GESCOM" générique. Diplôme visé non
+    // précisé par le CV ("stage de fin d'études" seul) : pas de détail
+    // inventé sur ce point.
     description:
-      "Mon tout premier projet d’envergure, réalisé dans le cadre de mon stage de fin d'études chez SIDINA (Groupe MANAO), pour l’obtention de mon Master 2. On a conçu et développé l'application de A à Z avec CodeIgniter 4 et jQuery pour les animations et interactions JavaScript.",
+      'Mon tout premier vrai projet, pendant mon stage de fin d’études chez Manao Logiciels : une application de gestion des factures périodiques, pensée et codée de A à Z avec CodeIgniter 4 et jQuery.',
     src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4QmHWzGjMU4y_gXyntQfWQQD93cQPklwA1w&s',
     // Même cas que Becquet! : ctaUrl identique à l'image de couverture.
     ctaUrl:
@@ -57,14 +66,14 @@ export const WorksList: Work[] = [
   {
     title: 'Assisteo Agny',
     description:
-      "Assisteo Agny est mon projet personnel en cours : un assistant IA de poche pour le web et Android, avec une seule base de code pour les deux (Next.js, Capacitor). Il scanne des photos classées par catégorie, suit les colis, les dépenses et les bénéfices, génère des todo lists à partir d'un document, et donne les valeurs nutritionnelles et des recettes. Backend avec Supabase, Redis et PostgreSQL.",
+      'Et si ton téléphone pouvait te dire ce qu’il y a sur une photo ? C’est l’idée derrière Assisteo Agny, mon assistant IA de poche : une seule base de code pour le web et Android (Next.js, Capacitor) qui scanne, classe, suit tes colis, tes dépenses et tes bénéfices, et transforme même un document en todo list. Supabase, Redis et PostgreSQL en coulisses.',
     src: '/works/assisteo-agny.webp',
     ctaUrl: 'https://assisteo-agny.vercel.app',
   },
   {
     title: 'Tikou',
     description:
-      "Tikou est un site e-commerce pour une marque malgache d'artisanat en raphia et cuir, que j'ai conçu, développé et mis en ligne seul avec Next.js, TypeScript et Tailwind CSS : catalogue, panier, contact, bilingue FR/EN, responsive et optimisé SEO. Il est en ligne, avec de vrais visiteurs et commandes.",
+      'Conçu, développé et mis en ligne en solo : Tikou est la boutique en ligne d’une marque malgache d’artisanat en raphia et cuir. Next.js, TypeScript, Tailwind CSS — catalogue, panier, contact, bilingue FR/EN, et du vrai SEO. Pas une maquette : il tourne, avec de vrais visiteurs et de vraies commandes.',
     src: '/works/tikou.webp',
     ctaUrl: 'https://www.tikou-mdg.com',
   },

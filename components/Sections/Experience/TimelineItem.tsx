@@ -5,6 +5,7 @@ import {
   Flex,
   Box,
   HStack,
+  Icon,
   Image,
   List,
   ListIcon,
@@ -13,7 +14,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { BiRightArrow } from 'react-icons/bi'
+import { BiBriefcase, BiRightArrow } from 'react-icons/bi'
 import { CompanyDetail } from 'config/experience'
 import {
   scrollRevealReduced,
@@ -83,14 +84,31 @@ const TimelineItem = ({
   const cardContent = (
     <>
       <HStack spacing={4} align="center">
-        <Image
-          src={colorMode === 'dark' ? company.logo.dark : company.logo.light}
-          alt={company.longName}
-          maxWidth="64px"
-          maxHeight="64px"
-          objectFit="contain"
-          fallback={<Skeleton height="64px" width="64px" />}
-        />
+        {company.logo ? (
+          <Image
+            src={colorMode === 'dark' ? company.logo.dark : company.logo.light}
+            alt={company.longName}
+            maxWidth="64px"
+            maxHeight="64px"
+            objectFit="contain"
+            fallback={<Skeleton height="64px" width="64px" />}
+          />
+        ) : (
+          // Pas de logo externe vérifiable pour cette entrée (ex. mission
+          // freelance sans client nommé) : icône générique plutôt qu'une
+          // image inventée ou mal attribuée.
+          <Flex
+            width="64px"
+            height="64px"
+            flexShrink={0}
+            align="center"
+            justify="center"
+            borderWidth="1px"
+            borderColor="border.subtle"
+          >
+            <Icon as={BiBriefcase} boxSize={6} color="text.tertiary" />
+          </Flex>
+        )}
         <Stack spacing={0}>
           <Text as="h3" textStyle="subtitle">
             {company.longName}

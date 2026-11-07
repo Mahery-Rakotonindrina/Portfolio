@@ -21,7 +21,9 @@ export const SocialMedias: SocialMedia[] = [
   },
   {
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/mahery-rakotonindrina/',
+    // Corrigé pour coller au CV (source de vérité) : l'URL sans suffixe
+    // numérique menait à un profil/page différent de celui listé sur le CV.
+    href: 'https://www.linkedin.com/in/mahery-rakotonindrina-2b6888154/',
     icon: FaLinkedin,
   },
   {

@@ -40,11 +40,11 @@ const DetailSection = () => {
         textStyle="body"
         variants={itemVariants}
       >
-        Depuis 2019, j’ai eu la chance de collaborer avec plusieurs entreprises
-        qui m’ont permis de relever de beaux défis et d’affiner mes compétences,
-        aussi bien humaines que techniques. <br />
-        Chacune de ces expériences a contribué à façonner le développeur que je
-        suis aujourd’hui, et garde une place particulière dans mon parcours.
+        Depuis 2019, mon clavier est passé entre les mains de plusieurs
+        entreprises — chacune m’a fait grandir un peu plus, techniquement et
+        humainement. <br />
+        Pas un CV qui défile : chaque étape ci-dessous garde une vraie place
+        dans mon parcours.
       </MotionText>
 
       <ExperienceTimeline />
